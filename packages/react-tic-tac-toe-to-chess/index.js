@@ -12,9 +12,13 @@ function Square(props) {
 
 class Board extends React.Component {
     renderSquare(i) {
+        let value = this.props.squares[i]
+        if ((this.props.highlighted) && (this.props.highlighted.includes(i))) {
+                value = <i>{value}</i>
+        }
         return (
             <Square
-                value={this.props.squares[i]}
+                value={value}
                 onClick={() => this.props.onClick(i)}
             />
         );
@@ -103,7 +107,7 @@ class Game extends React.Component {
 
         let status;
         if (winner) {
-            status = 'Winner: ' + winner;
+            status = 'Winner: ' + winner.winner;
         } else if (this.state.stepNumber === 9) {
             status = "Draw";
         } else {
@@ -116,6 +120,7 @@ class Game extends React.Component {
                     <Board
                         squares={current.squares}
                         onClick={(i) => this.handleClick(i)}
+                        highlighted={winner ? winner.line : undefined}
                     />
                 </div>
                 <div className="game-info">
@@ -148,7 +153,7 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
+            return {winner : squares[a], line : lines[i]};
         }
     }
     return null;
