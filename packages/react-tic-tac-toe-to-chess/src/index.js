@@ -54,6 +54,7 @@ class Game extends React.Component {
             }],
             stepNumber: 0,
             xIsNext: true,
+            reverse: false,
         };
     }
 
@@ -77,7 +78,6 @@ class Game extends React.Component {
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
-            reverse: false,
         });
     }
 
@@ -86,10 +86,6 @@ class Game extends React.Component {
             stepNumber: step,
             xIsNext: (step % 2) === 0,
         });
-    }
-
-    toggleReverse() {
-        this.setState({reverse : !this.state.reverse});
     }
 
     render() {
