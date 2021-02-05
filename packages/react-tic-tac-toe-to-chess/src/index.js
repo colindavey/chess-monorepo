@@ -2,13 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function Square(props) {
-    return (
-        <button className="square" onClick={props.onClick}>
-            {props.value}
-        </button>
-    );
-}
+const Square = ({onClick, value}) => (
+    <button className="square" onClick={onClick}>
+        {value}
+    </button>
+);
 
 class Board extends React.Component {
     renderSquare(i) {
