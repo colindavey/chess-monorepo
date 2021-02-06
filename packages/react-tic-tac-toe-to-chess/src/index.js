@@ -13,13 +13,10 @@ const Square = ({onClick, value, highlighted}) => {
 
 const Board = ({squares, onClick}) => {
     const renderSquare = (i) => {
+        const value = squares[i]
         const winner = calculateWinner(squares);
-        const winningLine = winner ? winner.line : undefined
-        let value = squares[i]
-        let highlighted = false;
-        if ((winningLine) && (winningLine.includes(i))) {
-                highlighted = true;
-        }
+        const highlighted = winner && (winner.line.includes(i))
+
         return (
             <Square
                 key={i}
@@ -52,8 +49,7 @@ const Game  = () => {
             row: '',
             col: '',
         }])
-    let moveNum = 0;
-    const [currentMoveNum, setCurrentMoveNum] = useState(moveNum);
+    const [currentMoveNum, setCurrentMoveNum] = useState(0);
 
     const handleClick = i => {
         let local_history = history.slice(0, currentMoveNum+1);
@@ -77,7 +73,7 @@ const Game  = () => {
     const renderGameInfo = () => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
-                moveNum2Letter(moveNum) + ' (' + snapshot.row + ',' + snapshot.col + ')':
+                moveNum2Letter(moveNum-1) + ' (' + snapshot.row + ',' + snapshot.col + ')':
                 'Game start';
             if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
