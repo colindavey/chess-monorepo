@@ -8,35 +8,47 @@ const Square = ({onClick, value}) => (
     </button>
 );
 
-class Board extends React.Component {
-    renderSquare(i) {
-        let value = this.props.squares[i]
-        if ((this.props.highlighted) && (this.props.highlighted.includes(i))) {
+const Board = ({squares, highlighted, onClick}) => {
+    const renderSquare = (i) => {
+        let value = squares[i]
+        if ((highlighted) && (highlighted.includes(i))) {
                 value = <i>{value}</i>
         }
         return (
             <Square
                 key={i}
                 value={value}
-                onClick={() => this.props.onClick(i)}
+                onClick={() => onClick(i)}
             />
         );
     }
 
-    render() {
-        let element = [];
-        for (let i=0; i < 3; i++) {
-            element.push(<div key={100+i} className="board-row"></div>)
-            for (let j=0; j < 3; j++) {
-                element.push(this.renderSquare((3*i) + j))
-            }
+    // renderSquare(i) {
+    //     let value = this.props.squares[i]
+    //     if ((this.props.highlighted) && (this.props.highlighted.includes(i))) {
+    //             value = <i>{value}</i>
+    //     }
+    //     return (
+    //         <Square
+    //             key={i}
+    //             value={value}
+    //             onClick={() => this.props.onClick(i)}
+    //         />
+    //     );
+    // }
+
+    let element = [];
+    for (let i=0; i < 3; i++) {
+        element.push(<div key={100+i} className="board-row"></div>)
+        for (let j=0; j < 3; j++) {
+            element.push(renderSquare((3*i) + j))
         }
-        return (
-            <div>
-                {element}
-            </div>
-        );
     }
+    return (
+        <div>
+            {element}
+        </div>
+    );
 }
 
 class Game extends React.Component {
