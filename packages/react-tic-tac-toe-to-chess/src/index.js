@@ -57,7 +57,7 @@ const Game  = () => {
         const snapshot = local_history[local_history.length - 1];
         const squares = snapshot.squares.slice();
         const winner = calculateWinner(snapshot.squares);
-        setWinner(winner)
+        // setWinner(winner)
         setSquares(squares)
 
         if (winner || squares[i]) {
@@ -75,6 +75,9 @@ const Game  = () => {
         }]))
         setStepNumber(local_history.length)
         setXIsNext(!xIsNext)
+        // setWinner(winner)
+        // const highlighted = winner ? winner.line : undefined
+        // console.log(winner)
     }
 
     const jumpTo = step => {
@@ -106,6 +109,8 @@ const Game  = () => {
         let status;
         const winner = calculateWinner(squares);
         // setWinner(winner)
+        // const highlighted = winner ? winner.line : undefined
+        // console.log(highlighted)
         if (winner) {
             status = 'Winner: ' + winner.winner;
         } else if (stepNumber === 9) {
