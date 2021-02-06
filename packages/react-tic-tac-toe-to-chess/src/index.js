@@ -38,22 +38,22 @@ const Board = ({squares, highlighted, onClick}) => {
 }
 
 const Game  = () => {
+    const [reverse, setReverse] = useState(false);
     const [history, setHistory] = useState(
         [{
             squares: Array(9).fill(null),
             turn: '',
-            index: '',
             row: '',
             col: '',
         }])
-    const [stepNumber, setStepNumber] = useState(0);
+    let moveNum = 0;
+    const [currentMoveNum, setCurrentMoveNum] = useState(moveNum);
     const [xIsNext, setXIsNext] = useState(true);
-    const [reverse, setReverse] = useState(false);
     const [winner, setWinner] = useState(null);
-    const [squares, setSquares] = useState(history[0].squares);
+    const [squares, setSquares] = useState(history[moveNum].squares);
 
     const handleClick = i => {
-        const local_history = history.slice(0, stepNumber+1);
+        let local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         const squares = snapshot.squares.slice();
 
@@ -63,52 +63,53 @@ const Game  = () => {
         const turn = xIsNext ? 'X' : 'O';
         squares[i] = turn;
         const coordinate = calculateRowCol(i);
-        setHistory(local_history.concat([{
+        local_history.push({
             squares: squares,
             turn: turn,
-            index: i,
             row: coordinate.row,
             col: coordinate.col,
-        }]))
+        })
+        setHistory(local_history)
 
-        setStepNumber(local_history.length)
-        setXIsNext(!xIsNext)
+        const moveNum = local_history.length-1
+        setCurrentMoveNum(moveNum)
+        setXIsNext((moveNum % 2) === 0)
         setSquares(squares)
         const winner = calculateWinner(squares);
         setWinner(winner)
     }
 
-    const jumpTo = step => {
-        setStepNumber(step)
-        setXIsNext((step % 2) === 0)
-        const squares = history[step].squares
+    const jumpTo = moveNum => {
+        setCurrentMoveNum(moveNum)
+        setXIsNext((moveNum % 2) === 0)
+        const squares = history[moveNum].squares
         setSquares(squares)
         const winner = calculateWinner(squares);
         setWinner(winner)
     }
 
     const renderGameInfo = () => {
-        const moves = history.map((step, move) => {
-            let desc = move ?
-                step.turn + ' (' + step.row + ',' + step.col + ')':
+        const listingButtons = history.map((snapshot, moveNum) => {
+            let desc = moveNum ?
+                snapshot.turn + ' (' + snapshot.row + ',' + snapshot.col + ')':
                 'Game start';
-            if (move === stepNumber) {
+            if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
             }
             return (
-                <ul key={move}>
-                    {move}. <button onClick={() => jumpTo(move)}>{desc}</button>
+                <ul key={moveNum}>
+                    {moveNum}. <button onClick={() => jumpTo(moveNum)}>{desc}</button>
                 </ul>
             );
         });
         if (reverse) {
-            moves.reverse();
+            listingButtons.reverse();
         }
 
         let status;
         if (winner) {
             status = 'Winner: ' + winner.winner;
-        } else if (stepNumber === 9) {
+        } else if (currentMoveNum === 9) {
             status = "Draw";
         } else {
             status = 'Next player: ' + (xIsNext ? 'X' : 'O');
@@ -121,7 +122,7 @@ const Game  = () => {
                         {reverse ? '^' : 'v'}
                     </button>
                 </div>
-                <ol>{moves}</ol>
+                <ol>{listingButtons}</ol>
             </div>
         )
     }
