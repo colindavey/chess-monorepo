@@ -56,11 +56,8 @@ const Game  = () => {
         const local_history = history.slice(0, stepNumber+1);
         const snapshot = local_history[local_history.length - 1];
         const squares = snapshot.squares.slice();
-        const winner = calculateWinner(snapshot.squares);
-        // setWinner(winner)
-        setSquares(squares)
 
-        if (winner || squares[i]) {
+        if (calculateWinner(squares) || squares[i]) {
             return;
         }
         const turn = xIsNext ? 'X' : 'O';
@@ -73,19 +70,21 @@ const Game  = () => {
             row: coordinate.row,
             col: coordinate.col,
         }]))
+
         setStepNumber(local_history.length)
         setXIsNext(!xIsNext)
-        // setWinner(winner)
-        // const highlighted = winner ? winner.line : undefined
-        // console.log(winner)
+        setSquares(squares)
+        const winner = calculateWinner(squares);
+        setWinner(winner)
     }
 
     const jumpTo = step => {
         setStepNumber(step)
         setXIsNext((step % 2) === 0)
-        setSquares(history[step].squares.slice())
-        // const winner = calculateWinner(snapshot.squares);
-        // setWinner(winner)
+        const squares = history[step].squares
+        setSquares(squares)
+        const winner = calculateWinner(squares);
+        setWinner(winner)
     }
 
     const renderGameInfo = () => {
@@ -107,10 +106,6 @@ const Game  = () => {
         }
 
         let status;
-        const winner = calculateWinner(squares);
-        // setWinner(winner)
-        // const highlighted = winner ? winner.line : undefined
-        // console.log(highlighted)
         if (winner) {
             status = 'Winner: ' + winner.winner;
         } else if (stepNumber === 9) {
@@ -135,8 +130,7 @@ const Game  = () => {
         <div className="game">
             <div className="game-board">
                 <Board
-                    // squares={current.squares}
-                    squares={squares.slice()}
+                    squares={squares}
                     onClick={(i) => handleClick(i)}
                     highlighted={winner ? winner.line : undefined}
                 />
