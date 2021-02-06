@@ -2,23 +2,30 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const Square = ({onClick, value}) => (
-    <button className="square" onClick={onClick}>
-        {value}
-    </button>
-);
+const Square = ({onClick, value, highlighted}) => {
+    const highlightClass = highlighted ? "square-highlighted" : '';
+    return (
+        <button className={"square " + highlightClass} onClick={onClick}>
+            {value}
+        </button>
+    ); 
+}
 
-const Board = ({squares, highlighted, onClick}) => {
+const Board = ({squares, onClick}) => {
     const renderSquare = (i) => {
+        const winner = calculateWinner(squares);
+        const winningLine = winner ? winner.line : undefined
         let value = squares[i]
-        if ((highlighted) && (highlighted.includes(i))) {
-                value = <i>{value}</i>
+        let highlighted = false;
+        if ((winningLine) && (winningLine.includes(i))) {
+                highlighted = true;
         }
         return (
             <Square
                 key={i}
                 value={value}
                 onClick={() => onClick(i)}
+                highlighted={highlighted}
             />
         );
     }
@@ -42,15 +49,11 @@ const Game  = () => {
     const [history, setHistory] = useState(
         [{
             squares: Array(9).fill(null),
-            turn: '',
             row: '',
             col: '',
         }])
     let moveNum = 0;
     const [currentMoveNum, setCurrentMoveNum] = useState(moveNum);
-    const [xIsNext, setXIsNext] = useState(true);
-    const [winner, setWinner] = useState(null);
-    const [squares, setSquares] = useState(history[moveNum].squares);
 
     const handleClick = i => {
         let local_history = history.slice(0, currentMoveNum+1);
@@ -60,45 +63,28 @@ const Game  = () => {
         if (calculateWinner(squares) || squares[i]) {
             return;
         }
-        const turn = xIsNext ? 'X' : 'O';
-        squares[i] = turn;
+        squares[i] = moveNum2Letter(currentMoveNum);
         const coordinate = calculateRowCol(i);
         local_history.push({
             squares: squares,
-            turn: turn,
             row: coordinate.row,
             col: coordinate.col,
         })
         setHistory(local_history)
-
-        const moveNum = local_history.length-1
-        setCurrentMoveNum(moveNum)
-        setXIsNext((moveNum % 2) === 0)
-        setSquares(squares)
-        const winner = calculateWinner(squares);
-        setWinner(winner)
-    }
-
-    const jumpTo = moveNum => {
-        setCurrentMoveNum(moveNum)
-        setXIsNext((moveNum % 2) === 0)
-        const squares = history[moveNum].squares
-        setSquares(squares)
-        const winner = calculateWinner(squares);
-        setWinner(winner)
+        setCurrentMoveNum(local_history.length-1)
     }
 
     const renderGameInfo = () => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
-                snapshot.turn + ' (' + snapshot.row + ',' + snapshot.col + ')':
+                moveNum2Letter(moveNum) + ' (' + snapshot.row + ',' + snapshot.col + ')':
                 'Game start';
             if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
             }
             return (
                 <ul key={moveNum}>
-                    {moveNum}. <button onClick={() => jumpTo(moveNum)}>{desc}</button>
+                    {moveNum}. <button onClick={() => setCurrentMoveNum(moveNum)}>{desc}</button>
                 </ul>
             );
         });
@@ -106,14 +92,16 @@ const Game  = () => {
             listingButtons.reverse();
         }
 
+        const winner = calculateWinner(history[currentMoveNum].squares);
         let status;
         if (winner) {
             status = 'Winner: ' + winner.winner;
         } else if (currentMoveNum === 9) {
             status = "Draw";
         } else {
-            status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+            status = 'Next player: ' + moveNum2Letter(currentMoveNum);
         }
+
         return (
             <div>
                 <div>
@@ -131,9 +119,8 @@ const Game  = () => {
         <div className="game">
             <div className="game-board">
                 <Board
-                    squares={squares}
+                    squares={history[currentMoveNum].squares}
                     onClick={(i) => handleClick(i)}
-                    highlighted={winner ? winner.line : undefined}
                 />
             </div>
             <div className="game-info">
@@ -174,4 +161,9 @@ function calculateRowCol(num) {
     const row = Math.floor(num / 3) + 1;
     const col = (num % 3) + 1;
     return {row : row, col : col};
+}
+
+function moveNum2Letter(moveNum) {
+    const xIsNext = ((moveNum % 2) === 0)
+    return xIsNext ? 'X' : 'O';
 }
