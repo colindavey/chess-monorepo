@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const numDim2 = 3;
+const dims = 3;
+// const dims = 5;
 
 const Square = ({onClick, value, highlighted}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
@@ -14,26 +15,43 @@ const Square = ({onClick, value, highlighted}) => {
 }
 
 const Board = ({squares, onClick}) => {
-    const renderSquare = (i) => {
-        const value = squares[i]
-        const winner = calculateWinner(squares);
-        const highlighted = winner && (winner.line.includes(i))
+    const renderSquare = (i, j) => {
+        const value = squares[i][j]
+        const winner = calculateWinner(dims, squares);
+        // line is one of 
+        //   cN (or other number) - column N
+        //   rN (or other number) - row N
+        //   diagUp upper diagonal
+        //   diagDown lower diagonal
+        let highlighted;
+        if (winner) {
+            if (winner.line[0] === 'c' && parseInt(winner.line[1]) === j) {
+                highlighted = true;
+            } else if (winner.line[0] === 'r' && parseInt(winner.line[1]) === i) {
+                highlighted = true;
+            } else if (winner.line === 'diagDown' && i === j) {
+                highlighted = true;
+            } else if (winner.line === 'diagUp' && i === (dims-1) - 1) {
+                highlighted = true;
+            }
+        }
 
         return (
             <Square
-                key={i}
+                key={rowCol2key(dims, i, j)}
                 value={value}
-                onClick={() => onClick(i)}
+                onClick={() => onClick(i, j)}
                 highlighted={highlighted}
             />
         );
     }
 
+    console.log(squares)
     let element = [];
-    for (let i=0; i < 3; i++) {
+    for (let i=0; i < dims; i++) {
         element.push(<div key={100+i} className="board-row"></div>)
-        for (let j=0; j < 3; j++) {
-            element.push(renderSquare((3*i) + j))
+        for (let j=0; j < dims; j++) {
+            element.push(renderSquare(i, j))
         }
     }
     return (
@@ -47,26 +65,29 @@ const Game  = () => {
     const [reverse, setReverse] = useState(false);
     const [history, setHistory] = useState(
         [{
-            squares: Array(9).fill(null),
+            squares: init2DimArray(dims),
             row: '',
             col: '',
         }])
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
 
-    const handleClick = i => {
+    const handleClick = (i, j) => {
+        console.log(history)
         let local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
-        const squares = snapshot.squares.slice();
+        // Makes deep copy
+        const squares = snapshot.squares.map(function(arr) {
+            return arr.slice();
+        });
 
-        if (calculateWinner(squares) || squares[i]) {
+        if (calculateWinner(dims, squares) || squares[i][j]) {
             return;
         }
-        squares[i] = moveNum2Letter(currentMoveNum);
-        const coordinate = calculateRowCol(i);
+        squares[i][j] = moveNum2Letter(currentMoveNum);
         local_history.push({
             squares: squares,
-            row: coordinate.row,
-            col: coordinate.col,
+            row: i,
+            col: j,
         })
         setHistory(local_history)
         setCurrentMoveNum(local_history.length-1)
@@ -90,11 +111,11 @@ const Game  = () => {
             listingButtons.reverse();
         }
 
-        const winner = calculateWinner(history[currentMoveNum].squares);
+        const winner = calculateWinner(dims, history[currentMoveNum].squares);
         let status;
         if (winner) {
             status = 'Winner: ' + winner.winner;
-        } else if (currentMoveNum === 9) {
+        } else if (currentMoveNum === dims*dims) {
             status = "Draw";
         } else {
             status = 'Next player: ' + moveNum2Letter(currentMoveNum);
@@ -113,12 +134,13 @@ const Game  = () => {
         )
     }
 
+    console.log(currentMoveNum)
     return (
         <div className="game">
             <div className="game-board">
                 <Board
                     squares={history[currentMoveNum].squares}
-                    onClick={(i) => handleClick(i)}
+                    onClick={(i, j) => handleClick(i, j)}
                 />
             </div>
             <div className="game-info">
@@ -135,41 +157,70 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-function calculateWinner(squares) {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return {winner : squares[a], line : lines[i]};
-        }
-    }
-    return null;
-}
-
-function calculateRowCol(num) {
-    const row = Math.floor(num / 3) + 1;
-    const col = (num % 3) + 1;
-    return {row : row, col : col};
-}
-
 function moveNum2Letter(moveNum) {
     const xIsNext = ((moveNum % 2) === 0)
     return xIsNext ? 'X' : 'O';
 }
 
-function init2DimArray(dim) {
+/* 2D functions */
+
+// line is one of 
+//   cN (or other number) - column N
+//   rN (or other number) - row N
+//   diagUp upper diagonal
+//   diagDown lower diagonal
+function calculateWinner(nDims, squares) {
+    const vectors = [];
+    const lines = [];
+    const diagVectorAscending = []
+    const diagVectorDescending = []
+    // Simultaneously build up all the row and column vectors as well as
+    // each diagonal vector
+    for (let ind=0; ind < nDims; ind++) {
+        const rowVector = squares[ind];
+        const colVector = squares.reduce(
+            (accum, vecIn) => {
+                accum.push(vecIn[ind])
+                return accum;
+            },
+            []
+        );
+        vectors.push(rowVector);
+        lines.push(`r${ind}`)
+        vectors.push(colVector);
+        lines.push(`c${ind}`)
+        diagVectorAscending.push(squares[ind][ind])
+        diagVectorDescending.push(squares[ind][(nDims-1)-ind])
+    }
+    vectors.push(diagVectorDescending)
+    lines.push('diagUp')
+    vectors.push(diagVectorAscending)
+    lines.push('diagDown')
+    // Run through all the vectors accumulated above, and see if we have a winner
+    for (let i = 0; i < vectors.length; i++) {
+        const vector = vectors[i]
+        const val = vector[0]
+        if (val) {
+            // Reduce results in true if all elements in the vector are the same
+            const haveWinner = vector.reduce(
+                (accum, valIn) => accum && (valIn === val)
+            )
+            if (haveWinner) {
+                return {winner : val, line : lines[i]};
+            }
+        }
+    }
+    return null;
+}
+
+function rowCol2key(nDims, row, col) {
+    return (nDims * row) + col
+}
+
+function init2DimArray(nDims) {
     const array2D = []
-    for (i=0; i < dim; i++) {
-        array2D.push(Array(dim).fill(null));
+    for (let row=0; row < nDims; row++) {
+        array2D.push(Array(nDims).fill(null));
     }
     return array2D;
 }
