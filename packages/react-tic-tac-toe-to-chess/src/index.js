@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+const numDim2 = 3;
+
 const Square = ({onClick, value, highlighted}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
     return (
@@ -162,4 +164,12 @@ function calculateRowCol(num) {
 function moveNum2Letter(moveNum) {
     const xIsNext = ((moveNum % 2) === 0)
     return xIsNext ? 'X' : 'O';
+}
+
+function init2DimArray(dim) {
+    const array2D = []
+    for (i=0; i < dim; i++) {
+        array2D.push(Array(dim).fill(null));
+    }
+    return array2D;
 }
