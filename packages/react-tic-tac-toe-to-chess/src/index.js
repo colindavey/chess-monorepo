@@ -5,8 +5,24 @@ import './index.css';
 const dims = 3;
 // const dims = 5;
 
+const WHITE_KING = "\u2654";
+// const WHITE_QUEEN = "\u2655";
+// const WHITE_ROOK = "\u2656";
+// const WHITE_BISHOP = "\u2657";
+// const WHITE_KNIGHT = "\u2658";
+// const WHITE_PAWN = "\u2659";
+const BLACK_KING = "\u265A";
+// const BLACK_QUEEN = "\u265B";
+// const BLACK_ROOK = "\u265C";
+// const BLACK_BISHOP = "\u265D";
+// const BLACK_KNIGHT = "\u265E";
+// const BLACK_PAWN = "\u265F";
+
 const Square = ({onClick, value, highlighted}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
+    // if (value) {
+    //     value = letter2ChessPiece(value);
+    // }
     return (
         <button className={"square " + highlightClass} onClick={onClick}>
             {value}
@@ -46,10 +62,8 @@ const Board = ({squares, onClick}) => {
         );
     }
 
-    console.log(squares)
     let element = [];
     for (let i=dims-1; i >= 0; i--) {
-        console.log(i)
         element.push(<div key={100+i} className="board-row"></div>)
         for (let j=0; j < dims; j++) {
             element.push(renderSquare(i, j))
@@ -73,7 +87,6 @@ const Game  = () => {
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
 
     const handleClick = (i, j) => {
-        console.log(history)
         let local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         // Makes deep copy
@@ -135,7 +148,6 @@ const Game  = () => {
         )
     }
 
-    console.log(currentMoveNum)
     return (
         <div className="game">
             <div className="game-board">
@@ -160,7 +172,8 @@ ReactDOM.render(
 
 function moveNum2Letter(moveNum) {
     const xIsNext = ((moveNum % 2) === 0)
-    return xIsNext ? 'X' : 'O';
+    // return xIsNext ? 'X' : 'O';
+    return xIsNext ? WHITE_KING : BLACK_KING;
 }
 
 /* 2D functions */
