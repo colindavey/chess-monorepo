@@ -48,7 +48,8 @@ const Board = ({squares, onClick}) => {
 
     console.log(squares)
     let element = [];
-    for (let i=0; i < dims; i++) {
+    for (let i=dims-1; i >= 0; i--) {
+        console.log(i)
         element.push(<div key={100+i} className="board-row"></div>)
         for (let j=0; j < dims; j++) {
             element.push(renderSquare(i, j))
