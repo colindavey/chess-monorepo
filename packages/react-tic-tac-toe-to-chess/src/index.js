@@ -58,19 +58,19 @@ const Square = ({onClick, value, highlighted, colorClass}) => {
 }
 
 const Board = ({squares, reverse, onClick, clickedSquare}) => {
-    const renderSquare = (i, j) => {
-        const value = pieceLookup[squares[i][j]];
+    const renderSquare = (row, col) => {
+        const value = pieceLookup[squares[row][col]];
         let highlighted = false;
         if (clickedSquare) {
-            highlighted = i === clickedSquare[0] && j === clickedSquare[1];
+            highlighted = row === clickedSquare[0] && col === clickedSquare[1];
         }
-        const colorClass = (i % 2 === j % 2) ? "square-black" : "square-white"
+        const colorClass = (row % 2 === col % 2) ? "square-black" : "square-white"
 
         return (
             <Square
-                key={rowCol2key(dims, i, j)}
+                key={rowCol2key(dims, row, col)}
                 value={value}
-                onClick={() => onClick(i, j)}
+                onClick={() => onClick(row, col)}
                 highlighted={highlighted}
                 colorClass={colorClass}
             />
@@ -78,20 +78,19 @@ const Board = ({squares, reverse, onClick, clickedSquare}) => {
     }
 
     let element = [];
-
+    const pushRow = (row) => {
+        element.push(<div key={100+row} className="board-row"></div>)
+        for (let col=0; col < dims; col++) {
+            element.push(renderSquare(row, col))
+        }
+    }
     if (reverse) {
-        for (let i=dims-1; i >= 0; i--) {
-            element.push(<div key={100+i} className="board-row"></div>)
-            for (let j=0; j < dims; j++) {
-                element.push(renderSquare(i, j))
-            }
+        for (let row=dims-1; row >= 0; row--) {
+            pushRow(row)
         }
     } else {
-        for (let i=0; i < dims; i++) {
-            element.push(<div key={100+i} className="board-row"></div>)
-            for (let j=0; j < dims; j++) {
-                element.push(renderSquare(i, j))
-            }
+        for (let row=0; row < dims; row++) {
+            pushRow(row)
         }
     }
     return (
@@ -113,8 +112,8 @@ const Game  = () => {
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
     const [clickedSquare, setClickedSquare] = useState(null)
 
-    const handleClick = (i, j) => {
-        setClickedSquare([i, j])
+    const handleClick = (row, col) => {
+        setClickedSquare([row, col])
         let local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         // Makes deep copy
@@ -122,14 +121,14 @@ const Game  = () => {
             return arr.slice();
         });
 
-        // if (calculateWinner(dims, squares) || squares[i][j]) {
+        // if (calculateWinner(dims, squares) || squares[row][col]) {
         //     return;
         // }
-        squares[i][j] = moveNum2Letter(currentMoveNum);
+        squares[row][col] = moveNum2Letter(currentMoveNum);
         local_history.push({
             squares: squares,
-            row: i,
-            col: j,
+            row: row,
+            col: col,
         })
         setHistory(local_history)
         setCurrentMoveNum(local_history.length-1)
@@ -149,9 +148,6 @@ const Game  = () => {
                 </ul>
             );
         });
-        // if (reverse) {
-        //     listingButtons.reverse();
-        // }
 
         // const winner = calculateWinner(dims, history[currentMoveNum].squares);
         // let status;
@@ -183,7 +179,7 @@ const Game  = () => {
             <div className="game-board">
                 <Board
                     squares={history[currentMoveNum].squares}
-                    onClick={(i, j) => handleClick(i, j)}
+                    onClick={(row, col) => handleClick(row, col)}
                     reverse={reverse}
                     clickedSquare={clickedSquare}
                 />
