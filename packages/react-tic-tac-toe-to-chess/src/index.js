@@ -33,14 +33,14 @@ const pieceLookup = {
 }
 const initPosition = 
 [
-    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
 ]
 
 const Square = ({onClick, value, highlighted, colorClass}) => {
@@ -85,11 +85,11 @@ const Board = ({squares, reverse, onClick, clickedSquare}) => {
         }
     }
     if (reverse) {
-        for (let row=dims-1; row >= 0; row--) {
+        for (let row=0; row < dims; row++) {
             pushRow(row)
         }
     } else {
-        for (let row=0; row < dims; row++) {
+        for (let row=dims-1; row >= 0; row--) {
             pushRow(row)
         }
     }
@@ -137,7 +137,8 @@ const Game  = () => {
     const renderGameInfo = () => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
-                moveNum2Letter(moveNum-1) + ' (' + snapshot.row + ',' + snapshot.col + ')':
+                // moveNum2Letter(moveNum-1) + ' (' + snapshot.row + ',' + snapshot.col + ')':
+                moveNum2Letter(moveNum-1) + rowCol2uci(snapshot.row, snapshot.col):
                 'Game start';
             if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
@@ -211,10 +212,8 @@ function rowCol2key(nDims, row, col) {
     return (nDims * row) + col
 }
 
-// function init2DimArray(nDims) {
-//     const array2D = []
-//     for (let row=0; row < nDims; row++) {
-//         array2D.push(Array(nDims).fill(null));
-//     }
-//     return array2D;
-// }
+function rowCol2uci(row, col) {
+    const file = String.fromCharCode('a'.charCodeAt()+col)
+    const rank = row+1;
+    return `${file}${rank}`;
+}
