@@ -18,22 +18,31 @@ ol, ul {
 }
 
 .square {
-    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid #999;
     float: left;
     font-size: 24px;
     font-weight: bold;
     line-height: 34px;
     height: 34px;
-    margin-right: -1px;
-    margin-top: -1px;
+    /* margin: 1px; */
     padding: 0;
     text-align: center;
     width: 34px;
 }
 
+.square-white {
+    background-color: #fff;
+}
+
+.square-black {
+    background-color: #aaa;
+}
+
 .square-highlighted {
-    border: 2px #999 solid;
+    border: 3px blue solid;
 }
 
 .square:focus {

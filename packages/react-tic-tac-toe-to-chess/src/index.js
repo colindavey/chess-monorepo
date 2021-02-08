@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const dims = 3;
+const dims = 8;
 // const dims = 5;
 
 const WHITE_KING = "\u2654";
@@ -18,13 +18,15 @@ const BLACK_KING = "\u265A";
 // const BLACK_KNIGHT = "\u265E";
 // const BLACK_PAWN = "\u265F";
 
-const Square = ({onClick, value, highlighted}) => {
+const Square = ({onClick, value, highlighted, colorClass}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
+    // const colorClass = "square-white"
+    // const colorClass = "square-white"
     // if (value) {
     //     value = letter2ChessPiece(value);
     // }
     return (
-        <button className={"square " + highlightClass} onClick={onClick}>
+        <button className={`square ${highlightClass} ${colorClass}`} onClick={onClick}>
             {value}
         </button>
     ); 
@@ -41,16 +43,18 @@ const Board = ({squares, onClick}) => {
         //   diagDown lower diagonal
         let highlighted;
         if (winner) {
+            console.log(winner.line)
             if (winner.line[0] === 'c' && parseInt(winner.line[1]) === j) {
                 highlighted = true;
             } else if (winner.line[0] === 'r' && parseInt(winner.line[1]) === i) {
                 highlighted = true;
-            } else if (winner.line === 'diagDown' && i === j) {
+            } else if (winner.line === 'diagUp' && i === j) {
                 highlighted = true;
-            } else if (winner.line === 'diagUp' && i === (dims-1) - 1) {
+            } else if (winner.line === 'diagDown' && (i === ((dims-1) - j))) {
                 highlighted = true;
             }
         }
+        const colorClass = (i % 2 === j % 2) ? "square-black" : "square-white"
 
         return (
             <Square
@@ -58,6 +62,7 @@ const Board = ({squares, onClick}) => {
                 value={value}
                 onClick={() => onClick(i, j)}
                 highlighted={highlighted}
+                colorClass={colorClass}
             />
         );
     }
@@ -207,9 +212,9 @@ function calculateWinner(nDims, squares) {
         diagVectorDescending.push(squares[ind][(nDims-1)-ind])
     }
     vectors.push(diagVectorDescending)
-    lines.push('diagUp')
-    vectors.push(diagVectorAscending)
     lines.push('diagDown')
+    vectors.push(diagVectorAscending)
+    lines.push('diagUp')
     // Run through all the vectors accumulated above, and see if we have a winner
     for (let i = 0; i < vectors.length; i++) {
         const vector = vectors[i]
