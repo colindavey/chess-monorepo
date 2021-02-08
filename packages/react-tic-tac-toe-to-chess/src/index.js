@@ -43,23 +43,17 @@ const initPosition =
     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
 ]
 
-const Square = ({onClick, value, highlighted, colorClass}) => {
+const Square = ({onClick, piece, highlighted, colorClass}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
-    // const colorClass = "square-white"
-    // const colorClass = "square-white"
-    // if (value) {
-    //     value = letter2ChessPiece(value);
-    // }
     return (
         <button className={`square ${highlightClass} ${colorClass}`} onClick={onClick}>
-            {value}
+            {piece}
         </button>
     ); 
 }
 
 const Board = ({squares, reverse, onClick, clickedSquare}) => {
-    const renderSquare = (row, col) => {
-        const value = pieceLookup[squares[row][col]];
+    const renderSquare = (piece, row, col) => {
         let highlighted = false;
         if (clickedSquare) {
             highlighted = row === clickedSquare[0] && col === clickedSquare[1];
@@ -69,7 +63,7 @@ const Board = ({squares, reverse, onClick, clickedSquare}) => {
         return (
             <Square
                 key={rowCol2key(dims, row, col)}
-                value={value}
+                piece={piece}
                 onClick={() => onClick(row, col)}
                 highlighted={highlighted}
                 colorClass={colorClass}
@@ -77,22 +71,26 @@ const Board = ({squares, reverse, onClick, clickedSquare}) => {
         );
     }
 
-    let element = [];
-    const pushRow = (row) => {
-        element.push(<div key={100+row} className="board-row"></div>)
-        for (let col=0; col < dims; col++) {
-            element.push(renderSquare(row, col))
-        }
+    const pushRow = (row, rowNum, element) => {
+        element.push(<div key={100+rowNum} className="board-row"></div>)
+        row.forEach((col, colNum) => 
+            element.push(renderSquare(pieceLookup[col], rowNum, colNum)))
+        return element;
     }
+
+    let element = [];
+    // Really need the old school loops - reversing causes problems, as does auto
+    // generation of index with forEach
     if (reverse) {
         for (let row=0; row < dims; row++) {
-            pushRow(row)
+            element = pushRow(squares[row], row, element)
         }
     } else {
         for (let row=dims-1; row >= 0; row--) {
-            pushRow(row)
+            element = pushRow(squares[row], row, element)
         }
     }
+
     return (
         <div>
             {element}
@@ -137,8 +135,7 @@ const Game  = () => {
     const renderGameInfo = () => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
-                // moveNum2Letter(moveNum-1) + ' (' + snapshot.row + ',' + snapshot.col + ')':
-                moveNum2Letter(moveNum-1) + rowCol2uci(snapshot.row, snapshot.col):
+                `${moveNum2Letter(moveNum-1)} ${rowCol2uci(snapshot.row, snapshot.col)}`:
                 'Game start';
             if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
