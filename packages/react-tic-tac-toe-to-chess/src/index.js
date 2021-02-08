@@ -54,10 +54,11 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
 
 const Board = ({squares, reverse, onClick, clickedSquare}) => {
     const renderSquare = (piece, row, col) => {
-        let highlighted = false;
-        if (clickedSquare) {
-            highlighted = row === clickedSquare[0] && col === clickedSquare[1];
-        }
+        // let highlighted = false;
+        // if (clickedSquare) {
+        //     highlighted = row === clickedSquare[0] && col === clickedSquare[1];
+        // }
+        const highlighted = clickedSquare ? (row === clickedSquare[0] && col === clickedSquare[1]) : false;
         const colorClass = (row % 2 === col % 2) ? "square-black" : "square-white"
 
         return (
@@ -112,7 +113,7 @@ const Game  = () => {
 
     const handleClick = (row, col) => {
         setClickedSquare([row, col])
-        let local_history = history.slice(0, currentMoveNum+1);
+        const local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         // Makes deep copy
         const squares = snapshot.squares.map(function(arr) {
