@@ -32,7 +32,7 @@ const Square = ({onClick, value, highlighted, colorClass}) => {
     ); 
 }
 
-const Board = ({squares, onClick}) => {
+const Board = ({squares, reverse, onClick}) => {
     const renderSquare = (i, j) => {
         const value = squares[i][j]
         const winner = calculateWinner(dims, squares);
@@ -68,10 +68,20 @@ const Board = ({squares, onClick}) => {
     }
 
     let element = [];
-    for (let i=dims-1; i >= 0; i--) {
-        element.push(<div key={100+i} className="board-row"></div>)
-        for (let j=0; j < dims; j++) {
-            element.push(renderSquare(i, j))
+
+    if (reverse) {
+        for (let i=dims-1; i >= 0; i--) {
+            element.push(<div key={100+i} className="board-row"></div>)
+            for (let j=0; j < dims; j++) {
+                element.push(renderSquare(i, j))
+            }
+        }
+    } else {
+        for (let i=0; i < dims; i++) {
+            element.push(<div key={100+i} className="board-row"></div>)
+            for (let j=0; j < dims; j++) {
+                element.push(renderSquare(i, j))
+            }
         }
     }
     return (
@@ -126,9 +136,9 @@ const Game  = () => {
                 </ul>
             );
         });
-        if (reverse) {
-            listingButtons.reverse();
-        }
+        // if (reverse) {
+        //     listingButtons.reverse();
+        // }
 
         const winner = calculateWinner(dims, history[currentMoveNum].squares);
         let status;
@@ -159,6 +169,7 @@ const Game  = () => {
                 <Board
                     squares={history[currentMoveNum].squares}
                     onClick={(i, j) => handleClick(i, j)}
+                    reverse={reverse}
                 />
             </div>
             <div className="game-info">
