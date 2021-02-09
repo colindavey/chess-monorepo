@@ -52,9 +52,9 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
     ); 
 }
 
-const Board = ({squares, reverse, onClick, clickedSquare}) => {
+const Board = ({squares, reverse, onClick, highlightedSquares}) => {
     const renderSquare = (piece, boardCoord) => {
-        const highlighted = clickedSquare ? (boardCoord.row === clickedSquare.row && boardCoord.col === clickedSquare.col) : false;
+        const highlighted = highlightedSquares ? (boardCoord.row === highlightedSquares.row && boardCoord.col === highlightedSquares.col) : false;
         const colorClass = (boardCoord.row % 2 === boardCoord.col % 2) ? "square-black" : "square-white"
 
         return (
@@ -104,37 +104,43 @@ const Game  = () => {
         [{
             // squares: init2DimArray(dims),
             squares: initPosition,
-            boardCoord: null,
+            boardCoord1: null,
+            boardCoord2: null,
         }])
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
-    const [clickedSquare, setClickedSquare] = useState(null)
+    const [click1, setClick1] = useState(null)
 
     const handleClick = (boardCoord) => {
         const local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
-        // Only continue if valid square, meaning has a piece of the player whose turn it is
-        if (piece2Color(snapshot.squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
-            return
+        if (!click1) {
+            // Only continue if valid square, meaning has a piece of the player whose turn it is
+            if (piece2Color(snapshot.squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
+                return
+            }
+            setClick1(boardCoord)
+        } else {
+            // Makes deep copy
+            const squares = snapshot.squares.map(function(arr) {
+                return arr.slice();
+            });
+            setClick1(null);
+            squares[boardCoord.row][boardCoord.col] = squares[click1.row][click1.col];
+            squares[click1.row][click1.col] = '';
+            local_history.push({
+                squares: squares,
+                boardCoord1: click1,
+                boardCoord2: boardCoord,
+            });
+            setHistory(local_history);
+            setCurrentMoveNum(local_history.length-1);
         }
-
-        // Makes deep copy
-        const squares = snapshot.squares.map(function(arr) {
-            return arr.slice();
-        });
-        setClickedSquare(boardCoord)
-        squares[boardCoord.row][boardCoord.col] = moveNum2Piece(currentMoveNum);
-        local_history.push({
-            squares: squares,
-            boardCoord: boardCoord,
-        })
-        setHistory(local_history)
-        setCurrentMoveNum(local_history.length-1)
     }
 
     const renderGameInfo = () => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
-                `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord)}`:
+                `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
                 'Game start';
             if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
@@ -178,7 +184,7 @@ const Game  = () => {
                     squares={history[currentMoveNum].squares}
                     onClick={boardCoord => handleClick(boardCoord)}
                     reverse={reverse}
-                    clickedSquare={clickedSquare}
+                    highlightedSquares={click1}
                 />
             </div>
             <div className="game-info">
@@ -194,10 +200,6 @@ ReactDOM.render(
     <Game />,
     document.getElementById('root')
 );
-
-function moveNum2Piece(moveNum) {
-    return ((moveNum % 2) === 0) ? 'K' : 'k';
-}
 
 function piece2Color(piece) {
     if (!piece) {
