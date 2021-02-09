@@ -104,8 +104,7 @@ const Game  = () => {
         [{
             // squares: init2DimArray(dims),
             squares: initPosition,
-            row: '',
-            col: '',
+            boardCoord: null,
         }])
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
     const [clickedSquare, setClickedSquare] = useState(null)
