@@ -53,15 +53,15 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
 }
 
 const Board = ({squares, reverse, onClick, clickedSquare}) => {
-    const renderSquare = (piece, row, col) => {
-        const highlighted = clickedSquare ? (row === clickedSquare[0] && col === clickedSquare[1]) : false;
-        const colorClass = (row % 2 === col % 2) ? "square-black" : "square-white"
+    const renderSquare = (piece, boardCoord) => {
+        const highlighted = clickedSquare ? (boardCoord.row === clickedSquare.row && boardCoord.col === clickedSquare.col) : false;
+        const colorClass = (boardCoord.row % 2 === boardCoord.col % 2) ? "square-black" : "square-white"
 
         return (
             <Square
-                key={rowCol2key(dims, row, col)}
+                key={boardCoord2key(dims, boardCoord)}
                 piece={piece}
-                onClick={() => onClick(row, col)}
+                onClick={() => onClick(boardCoord)}
                 highlighted={highlighted}
                 colorClass={colorClass}
             />
@@ -71,7 +71,7 @@ const Board = ({squares, reverse, onClick, clickedSquare}) => {
     const pushRow = (row, rowNum, boardElement) => {
         boardElement.push(<div key={100+rowNum} className="board-row"></div>)
         row.forEach((col, colNum) => 
-            boardElement.push(renderSquare(pieceLookup[col], rowNum, colNum)))
+            boardElement.push(renderSquare(pieceLookup[col], {row: rowNum, col: colNum})))
         return boardElement;
     }
 
@@ -110,8 +110,8 @@ const Game  = () => {
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
     const [clickedSquare, setClickedSquare] = useState(null)
 
-    const handleClick = (row, col) => {
-        setClickedSquare([row, col])
+    const handleClick = (boardCoord) => {
+        setClickedSquare(boardCoord)
         const local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         // Makes deep copy
@@ -122,11 +122,10 @@ const Game  = () => {
         // if (calculateWinner(dims, squares) || squares[row][col]) {
         //     return;
         // }
-        squares[row][col] = moveNum2Letter(currentMoveNum);
+        squares[boardCoord.row][boardCoord.col] = moveNum2Letter(currentMoveNum);
         local_history.push({
             squares: squares,
-            row: row,
-            col: col,
+            boardCoord: boardCoord,
         })
         setHistory(local_history)
         setCurrentMoveNum(local_history.length-1)
@@ -135,7 +134,7 @@ const Game  = () => {
     const renderGameInfo = () => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
-                `${moveNum2Letter(moveNum-1)} ${rowCol2uci(snapshot.row, snapshot.col)}`:
+                `${moveNum2Letter(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord)}`:
                 'Game start';
             if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
@@ -177,7 +176,7 @@ const Game  = () => {
             <div className="game-board">
                 <Board
                     squares={history[currentMoveNum].squares}
-                    onClick={(row, col) => handleClick(row, col)}
+                    onClick={boardCoord => handleClick(boardCoord)}
                     reverse={reverse}
                     clickedSquare={clickedSquare}
                 />
@@ -205,12 +204,12 @@ function moveNum2Letter(moveNum) {
 
 /* 2D functions */
 
-function rowCol2key(nDims, row, col) {
-    return (nDims * row) + col
+function boardCoord2key(nDims, boardCoord) {
+    return (nDims * boardCoord.row) + boardCoord.col
 }
 
-function rowCol2uci(row, col) {
-    const file = String.fromCharCode('a'.charCodeAt()+col)
-    const rank = row+1;
+function boardCoord2uci(boardCoord) {
+    const file = String.fromCharCode('a'.charCodeAt()+boardCoord.col)
+    const rank = boardCoord.row+1;
     return `${file}${rank}`;
 }
