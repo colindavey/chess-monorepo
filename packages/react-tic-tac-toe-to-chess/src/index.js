@@ -110,7 +110,7 @@ const Game  = () => {
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
     const [click1, setClick1] = useState(null)
 
-    const handleClick = (boardCoord) => {
+    const handleBoardClick = (boardCoord) => {
         const local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         if (!click1) {
@@ -137,7 +137,7 @@ const Game  = () => {
         }
     }
 
-    const renderGameInfo = () => {
+    const renderGameInfo = (history, currentMoveNum, reverse) => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
                 `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
@@ -181,11 +181,15 @@ const Game  = () => {
         <div className="game">
             <Board
                 squares={history[currentMoveNum].squares}
-                onClick={boardCoord => handleClick(boardCoord)}
+                onClick={boardCoord => handleBoardClick(boardCoord)}
                 reverse={reverse}
                 highlightedSquares={click1}
             />
-            {renderGameInfo()}
+            {renderGameInfo(
+                history, 
+                currentMoveNum, 
+                reverse)
+            }
         </div>
     );
 }
