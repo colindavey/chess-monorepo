@@ -137,7 +137,16 @@ const Game  = () => {
         }
     }
 
-    const renderGameInfo = (history, currentMoveNum, reverse) => {
+    const handleListingClick = (moveNum) => {
+        setCurrentMoveNum(moveNum);
+    }
+                    // {moveNum}. <button onClick={() => setCurrentMoveNum(moveNum)}>{desc}</button>
+    const handleReverseClick = (reverseIn) =>{
+        console.log('reverseClick')
+        setReverse(reverseIn)
+    }
+
+    const renderGameInfo = (history, currentMoveNum, reverse, handleListingClick, handleReverseClick) => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
                 `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
@@ -147,7 +156,7 @@ const Game  = () => {
             }
             return (
                 <ul key={moveNum}>
-                    {moveNum}. <button onClick={() => setCurrentMoveNum(moveNum)}>{desc}</button>
+                    {moveNum}. <button onClick={() => handleListingClick(moveNum)}>{desc}</button>
                 </ul>
             );
         });
@@ -168,7 +177,7 @@ const Game  = () => {
             <div className="game-info">
                 <div>
                     {status}&nbsp;
-                    <button onClick={() => setReverse(!reverse)}>
+                    <button onClick={() => handleReverseClick(!reverse)}>
                         {reverse ? '^' : 'v'}
                     </button>
                 </div>
@@ -188,8 +197,8 @@ const Game  = () => {
             {renderGameInfo(
                 history, 
                 currentMoveNum, 
-                reverse)
-            }
+                reverse, handleListingClick, handleReverseClick)
+                }
         </div>
     );
 }
