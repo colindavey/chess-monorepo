@@ -68,7 +68,7 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
         );
     }
 
-    const pushRow = (row, rowNum, boardElement) => {
+    const renderRow = (row, rowNum, boardElement) => {
         boardElement.push(<div key={100+rowNum} className="board-row"></div>)
         row.forEach((col, colNum) => 
             boardElement.push(renderSquare(pieceLookup[col], {row: rowNum, col: colNum})))
@@ -81,18 +81,18 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
         // generation of index with forEach
         if (reverse) {
             for (let row=0; row < dims; row++) {
-                boardElement = pushRow(squares[row], row, boardElement)
+                boardElement = renderRow(squares[row], row, boardElement)
             }
         } else {
             for (let row=dims-1; row >= 0; row--) {
-                boardElement = pushRow(squares[row], row, boardElement)
+                boardElement = renderRow(squares[row], row, boardElement)
             }
         }
         return boardElement;
     }
 
     return (
-        <div>
+        <div className="game-board">
             {renderBoard()}
         </div>
     );
@@ -165,7 +165,7 @@ const Game  = () => {
         status = 'Next player: ' + moveNum2Color(currentMoveNum);
 
         return (
-            <div>
+            <div className="game-info">
                 <div>
                     {status}&nbsp;
                     <button onClick={() => setReverse(!reverse)}>
@@ -179,17 +179,13 @@ const Game  = () => {
 
     return (
         <div className="game">
-            <div className="game-board">
-                <Board
-                    squares={history[currentMoveNum].squares}
-                    onClick={boardCoord => handleClick(boardCoord)}
-                    reverse={reverse}
-                    highlightedSquares={click1}
-                />
-            </div>
-            <div className="game-info">
-                {renderGameInfo()}
-            </div>
+            <Board
+                squares={history[currentMoveNum].squares}
+                onClick={boardCoord => handleClick(boardCoord)}
+                reverse={reverse}
+                highlightedSquares={click1}
+            />
+            {renderGameInfo()}
         </div>
     );
 }
