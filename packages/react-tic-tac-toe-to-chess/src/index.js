@@ -68,29 +68,32 @@ const Board = ({squares, reverse, onClick, clickedSquare}) => {
         );
     }
 
-    const pushRow = (row, rowNum, element) => {
-        element.push(<div key={100+rowNum} className="board-row"></div>)
+    const pushRow = (row, rowNum, boardElement) => {
+        boardElement.push(<div key={100+rowNum} className="board-row"></div>)
         row.forEach((col, colNum) => 
-            element.push(renderSquare(pieceLookup[col], rowNum, colNum)))
-        return element;
+            boardElement.push(renderSquare(pieceLookup[col], rowNum, colNum)))
+        return boardElement;
     }
 
-    let element = [];
-    // Really need the old school loops - reversing causes problems, as does auto
-    // generation of index with forEach
-    if (reverse) {
-        for (let row=0; row < dims; row++) {
-            element = pushRow(squares[row], row, element)
+    const renderBoard = () => {
+        let boardElement = [];
+        // Really need the old school loops - reversing causes problems, as does auto
+        // generation of index with forEach
+        if (reverse) {
+            for (let row=0; row < dims; row++) {
+                boardElement = pushRow(squares[row], row, boardElement)
+            }
+        } else {
+            for (let row=dims-1; row >= 0; row--) {
+                boardElement = pushRow(squares[row], row, boardElement)
+            }
         }
-    } else {
-        for (let row=dims-1; row >= 0; row--) {
-            element = pushRow(squares[row], row, element)
-        }
+        return boardElement;
     }
 
     return (
         <div>
-            {element}
+            {renderBoard()}
         </div>
     );
 }
