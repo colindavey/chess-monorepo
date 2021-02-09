@@ -110,18 +110,19 @@ const Game  = () => {
     const [clickedSquare, setClickedSquare] = useState(null)
 
     const handleClick = (boardCoord) => {
-        setClickedSquare(boardCoord)
         const local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
+        // Only continue if valid square, meaning has a piece of the player whose turn it is
+        if (piece2Color(snapshot.squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
+            return
+        }
+
         // Makes deep copy
         const squares = snapshot.squares.map(function(arr) {
             return arr.slice();
         });
-
-        // if (calculateWinner(dims, squares) || squares[row][col]) {
-        //     return;
-        // }
-        squares[boardCoord.row][boardCoord.col] = moveNum2Letter(currentMoveNum);
+        setClickedSquare(boardCoord)
+        squares[boardCoord.row][boardCoord.col] = moveNum2Piece(currentMoveNum);
         local_history.push({
             squares: squares,
             boardCoord: boardCoord,
@@ -133,7 +134,7 @@ const Game  = () => {
     const renderGameInfo = () => {
         const listingButtons = history.map((snapshot, moveNum) => {
             let desc = moveNum ?
-                `${moveNum2Letter(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord)}`:
+                `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord)}`:
                 'Game start';
             if (moveNum === currentMoveNum) {
                 desc = <b>{desc}</b>
@@ -152,10 +153,10 @@ const Game  = () => {
         // } else if (currentMoveNum === dims*dims) {
         //     status = "Draw";
         // } else {
-        //     status = 'Next player: ' + moveNum2Letter(currentMoveNum);
+        //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
         // }
         let status;
-        status = 'Next player: ' + moveNum2Letter(currentMoveNum);
+        status = 'Next player: ' + moveNum2Color(currentMoveNum);
 
         return (
             <div>
@@ -194,11 +195,19 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-function moveNum2Letter(moveNum) {
-    const xIsNext = ((moveNum % 2) === 0)
-    // return xIsNext ? 'X' : 'O';
-    // return xIsNext ? WHITE_KING : BLACK_KING;
-    return xIsNext ? 'K' : 'k';
+function moveNum2Piece(moveNum) {
+    return ((moveNum % 2) === 0) ? 'K' : 'k';
+}
+
+function piece2Color(piece) {
+    if (!piece) {
+        return null;
+    }
+    return piece.toUpperCase() === piece ? 'W' : 'B'
+}
+
+function moveNum2Color(moveNum) {
+    return ((moveNum % 2) === 0) ? 'W' : 'B';
 }
 
 /* 2D functions */
