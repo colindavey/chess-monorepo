@@ -100,21 +100,11 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
     );
 }
 
-const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleReverseClick}) => {
-    const listingButtons = history.map((snapshot, moveNum) => {
-        let desc = moveNum ?
-            `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
-            'Game start';
-        if (moveNum === currentMoveNum) {
-            desc = <b>{desc}</b>
-        }
-        return (
-            <ul key={moveNum}>
-                {moveNum}. <button onClick={() => handleListingClick(moveNum)}>{desc}</button>
-            </ul>
-        );
-    });
+// const chessListing = () => {
+// 
+// }
 
+const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleReverseClick}) => {
     // const winner = calculateWinner(dims, history[currentMoveNum].squares);
     // let status;
     // if (winner) {
@@ -127,6 +117,34 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
     let status;
     status = 'Next player: ' + moveNum2Color(currentMoveNum);
 
+    const startButton = 
+    (
+        <ul key="0">
+            <button onClick={() => handleListingClick(0)}>Game start</button>
+        </ul>
+    )
+
+    const listingItems = history.map((snapshot, moveNum) => {
+        let desc = moveNum ?
+            `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
+            'Game start';
+        if (moveNum === currentMoveNum) {
+            desc = <b>{desc}</b>
+        }
+        return (
+            <ul key={moveNum}>
+                {moveNum}. <button onClick={() => handleListingClick(moveNum)}>{desc}</button>
+            </ul>
+        );
+    });
+            
+    const listing = 
+    (
+        <ol>
+            {listingItems}
+        </ol>
+    )
+
     return (
         <div className="game-info">
             <div>
@@ -134,8 +152,9 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
                 <button onClick={() => handleReverseClick(!reverse)}>
                     {reverse ? '^' : 'v'}
                 </button>
+                {startButton}
             </div>
-            <ol>{listingButtons}</ol>
+            {listing}
         </div>
     )
 }
