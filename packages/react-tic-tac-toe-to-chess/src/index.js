@@ -69,23 +69,25 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
     }
 
     const renderRow = (row, rowNum, boardElement) => {
-        boardElement.push(<div key={100+rowNum} className="board-row"></div>)
-        row.forEach((col, colNum) => 
-            boardElement.push(renderSquare(pieceLookup[col], {row: rowNum, col: colNum})))
-        return boardElement;
+        const the_row =  row.map((col, colNum) => renderSquare(pieceLookup[col], {row: rowNum, col: colNum}))
+        return (
+            <div key={100+rowNum} className="board-row">
+                {the_row}
+            </div>
+        )
     }
 
     const renderBoard = () => {
-        let boardElement = [];
         // Really need the old school loops - reversing causes problems, as does auto
         // generation of index with forEach
+        let boardElement = [];
         if (reverse) {
             for (let row=0; row < dims; row++) {
-                boardElement = renderRow(squares[row], row, boardElement)
+                boardElement.push(renderRow(squares[row], row))
             }
         } else {
             for (let row=dims-1; row >= 0; row--) {
-                boardElement = renderRow(squares[row], row, boardElement)
+                boardElement.push(renderRow(squares[row], row))
             }
         }
         return boardElement;
@@ -96,6 +98,46 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
             {renderBoard()}
         </div>
     );
+}
+
+const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleReverseClick}) => {
+    const listingButtons = history.map((snapshot, moveNum) => {
+        let desc = moveNum ?
+            `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
+            'Game start';
+        if (moveNum === currentMoveNum) {
+            desc = <b>{desc}</b>
+        }
+        return (
+            <ul key={moveNum}>
+                {moveNum}. <button onClick={() => handleListingClick(moveNum)}>{desc}</button>
+            </ul>
+        );
+    });
+
+    // const winner = calculateWinner(dims, history[currentMoveNum].squares);
+    // let status;
+    // if (winner) {
+    //     status = 'Winner: ' + winner.winner;
+    // } else if (currentMoveNum === dims*dims) {
+    //     status = "Draw";
+    // } else {
+    //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
+    // }
+    let status;
+    status = 'Next player: ' + moveNum2Color(currentMoveNum);
+
+    return (
+        <div className="game-info">
+            <div>
+                {status}&nbsp;
+                <button onClick={() => handleReverseClick(!reverse)}>
+                    {reverse ? '^' : 'v'}
+                </button>
+            </div>
+            <ol>{listingButtons}</ol>
+        </div>
+    )
 }
 
 const Game  = () => {
@@ -111,6 +153,7 @@ const Game  = () => {
     const [click1, setClick1] = useState(null)
 
     const handleBoardClick = (boardCoord) => {
+        console.log(boardCoord)
         const local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         if (!click1) {
@@ -140,65 +183,27 @@ const Game  = () => {
     const handleListingClick = (moveNum) => {
         setCurrentMoveNum(moveNum);
     }
-                    // {moveNum}. <button onClick={() => setCurrentMoveNum(moveNum)}>{desc}</button>
+
     const handleReverseClick = (reverseIn) =>{
         console.log('reverseClick')
         setReverse(reverseIn)
-    }
-
-    const renderGameInfo = (history, currentMoveNum, reverse, handleListingClick, handleReverseClick) => {
-        const listingButtons = history.map((snapshot, moveNum) => {
-            let desc = moveNum ?
-                `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
-                'Game start';
-            if (moveNum === currentMoveNum) {
-                desc = <b>{desc}</b>
-            }
-            return (
-                <ul key={moveNum}>
-                    {moveNum}. <button onClick={() => handleListingClick(moveNum)}>{desc}</button>
-                </ul>
-            );
-        });
-
-        // const winner = calculateWinner(dims, history[currentMoveNum].squares);
-        // let status;
-        // if (winner) {
-        //     status = 'Winner: ' + winner.winner;
-        // } else if (currentMoveNum === dims*dims) {
-        //     status = "Draw";
-        // } else {
-        //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
-        // }
-        let status;
-        status = 'Next player: ' + moveNum2Color(currentMoveNum);
-
-        return (
-            <div className="game-info">
-                <div>
-                    {status}&nbsp;
-                    <button onClick={() => handleReverseClick(!reverse)}>
-                        {reverse ? '^' : 'v'}
-                    </button>
-                </div>
-                <ol>{listingButtons}</ol>
-            </div>
-        )
     }
 
     return (
         <div className="game">
             <Board
                 squares={history[currentMoveNum].squares}
-                onClick={boardCoord => handleBoardClick(boardCoord)}
+                onClick={handleBoardClick}
                 reverse={reverse}
                 highlightedSquares={click1}
             />
-            {renderGameInfo(
-                history, 
-                currentMoveNum, 
-                reverse, handleListingClick, handleReverseClick)
-                }
+            <GameInfo
+                history={history} 
+                currentMoveNum={currentMoveNum} 
+                reverse={reverse} 
+                handleListingClick={handleListingClick} 
+                handleReverseClick={handleReverseClick}
+            />
         </div>
     );
 }
