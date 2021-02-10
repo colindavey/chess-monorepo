@@ -98,9 +98,10 @@ ol, ul {
     /* grid-auto-rows: minmax(10px, auto); */
 }
 
-.grid-top {
+.grid-top-row {
     grid-template-columns: 120px;
     width: 100%;
+    text-align: center;
 }
 
 
