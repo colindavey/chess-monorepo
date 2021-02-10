@@ -23,14 +23,14 @@ ol, ul {
     align-items: center;
     border: 1px solid #999;
     float: left;
-    font-size: 24px;
+    font-size: 34px;
     font-weight: bold;
-    line-height: 34px;
-    height: 34px;
+    line-height: 44px;
+    height: 44px;
     /* margin: 1px; */
     padding: 0;
     text-align: center;
-    width: 34px;
+    width: 44px;
 }
 
 .square-white {
@@ -61,3 +61,57 @@ ol, ul {
 .game-info {
     margin-left: 20px;
 }
+
+.grid-cell {
+    border-spacing: 0px;
+    /* border-collapse: collapse; */
+    /* border: 1px solid black; */
+
+    /* display: flex; */
+    /* font-family: 'Times New Roman', Times, serif; */
+    /* font-size: medium; */
+    /* font: 14px "Century Gothic", Futura, sans-serif; */
+    font-size: 13px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid black;
+    /* border: 0px solid black; */
+    border-radius: 0px;
+    margin: 0;
+    padding: 2px 4px;
+    /* float: left; */
+
+    /* font-weight: bold; */
+    /* line-height: 34px; */
+    /* margin-right: -1px; */
+    /* margin-top: -1px; */
+    /* text-align: center; */
+    /* width: 34px; */
+}
+
+.grid-wrapper {
+    display: grid;
+    /* grid-template-columns: repeat(3, 1fr); */
+    /* grid-template-columns: auto auto auto; */
+    grid-template-columns: 20px 50px 50px;
+    grid-column-gap: 0px;
+    /* grid-auto-rows: minmax(10px, auto); */
+}
+
+.grid-top {
+    grid-template-columns: 120px;
+    width: 100%;
+}
+
+
+div.scroll { 
+    /* margin:4px, 4px;  */
+    /* padding:4px;  */
+    background-color: #eee; 
+    width: 120px; 
+    border: 1px solid black;
+    height: 330px; 
+    overflow-x: hidden; 
+    overflow-y: auto; 
+    /* text-align:justify;  */
+} 

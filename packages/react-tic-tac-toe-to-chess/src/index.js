@@ -100,24 +100,68 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
     );
 }
 
-const ChessListing = ({history, currentMoveNum, handleClick}) => {
-    const listingItems = history.map((snapshot, moveNum) => {
-        const moveNumIndex = moveNum+1
-        let desc = `${moveNum2Color(moveNumIndex-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`
-        if (moveNumIndex === currentMoveNum) {
-            desc = <b>{desc}</b>
-        }
-        return (
-            <ul key={moveNumIndex}>
-                {moveNumIndex}. <button onClick={() => handleClick(moveNumIndex)}>{desc}</button>
-            </ul>
-        );
-    });
+// const ChessListing = ({moves, currentMoveNum, handleClick}) => {
+//     const listingItems = moves.map((move, moveNum) => {
+//         const moveNumIndex = moveNum+1
+//         let desc = `${moveNum2Color(moveNumIndex-1)} ${move}`
+//         if (moveNumIndex === currentMoveNum) {
+//             desc = <b>{desc}</b>
+//         }
+//         return (
+//             <ul key={moveNumIndex}>
+//                 {moveNumIndex}. <button onClick={() => handleClick(moveNumIndex)}>{desc}</button>
+//             </ul>
+//         );
+//     });
             
+//     return (
+//         <ol>
+//             {listingItems}
+//         </ol>
+//     )
+// }
+
+const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
+    let tableMoves = []
+    for (let i=0; i < moves.length; i+=2) {
+        tableMoves.push([
+            {move: moves[i], index: i},
+            moves[i+1] ? {move: moves[i+1], index: i+1} : ''
+        ])
+    }
+
+    const renderCol = (row, row_index) => {
+        return row.map((col, col_index) => {
+            const index = `${row_index},${col_index}`
+            const move = col.index+1===currentMoveNum ? <b>{col.move}</b> : col.move
+            console.log('nums', col.index+1, currentMoveNum)
+            return col
+                ?
+                    <div key={index} className="grid-cell" onClick={() => handleClick(col.index+1)}>{move}</div> 
+                :
+                    <div key={index} className="grid-cell"></div> 
+        })
+    }
+
+    const listing = tableMoves.map((row, index) => {
+        const newCol = renderCol(row, index)
+        return (
+            <div key={index} className="grid-wrapper">
+                <div className="grid-cell">
+                    {index+1}.
+                </div>
+                {newCol}
+            </div>
+        )
+    })
+
     return (
-        <ol>
-            {listingItems}
-        </ol>
+        <div className="scroll">
+            <div className="grid-top-row">
+                <div className="grid-cell" onClick={() => handleClick(0)}>Starting position</div>
+            </div>
+            {listing}
+        </div>
     )
 }
 
@@ -134,12 +178,7 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
     let status;
     status = 'Next player: ' + moveNum2Color(currentMoveNum);
 
-    const startButton = 
-    (
-        <ul key="0">
-            <button onClick={() => handleListingClick(0)}>Game start</button>
-        </ul>
-    )
+    const moves = history.slice(1).map(snapshot => `${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`)
 
     return (
         <div className="game-info">
@@ -148,10 +187,9 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
                 <button onClick={() => handleReverseClick(!reverse)}>
                     {reverse ? '^' : 'v'}
                 </button>
-                {startButton}
             </div>
-            <ChessListing
-                history={history.slice(1)} 
+            <ChessListingGrid
+                moves={moves} 
                 currentMoveNum={currentMoveNum} 
                 handleClick={handleListingClick} 
             />
