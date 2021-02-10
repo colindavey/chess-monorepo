@@ -100,9 +100,26 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
     );
 }
 
-// const chessListing = () => {
-// 
-// }
+const ChessListing = ({history, currentMoveNum, handleClick}) => {
+    const listingItems = history.map((snapshot, moveNum) => {
+        const moveNumIndex = moveNum+1
+        let desc = `${moveNum2Color(moveNumIndex-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`
+        if (moveNumIndex === currentMoveNum) {
+            desc = <b>{desc}</b>
+        }
+        return (
+            <ul key={moveNumIndex}>
+                {moveNumIndex}. <button onClick={() => handleClick(moveNumIndex)}>{desc}</button>
+            </ul>
+        );
+    });
+            
+    return (
+        <ol>
+            {listingItems}
+        </ol>
+    )
+}
 
 const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleReverseClick}) => {
     // const winner = calculateWinner(dims, history[currentMoveNum].squares);
@@ -124,27 +141,6 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
         </ul>
     )
 
-    const listingItems = history.map((snapshot, moveNum) => {
-        let desc = moveNum ?
-            `${moveNum2Color(moveNum-1)} ${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`:
-            'Game start';
-        if (moveNum === currentMoveNum) {
-            desc = <b>{desc}</b>
-        }
-        return (
-            <ul key={moveNum}>
-                {moveNum}. <button onClick={() => handleListingClick(moveNum)}>{desc}</button>
-            </ul>
-        );
-    });
-            
-    const listing = 
-    (
-        <ol>
-            {listingItems}
-        </ol>
-    )
-
     return (
         <div className="game-info">
             <div>
@@ -154,7 +150,11 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
                 </button>
                 {startButton}
             </div>
-            {listing}
+            <ChessListing
+                history={history.slice(1)} 
+                currentMoveNum={currentMoveNum} 
+                handleClick={handleListingClick} 
+            />
         </div>
     )
 }
@@ -172,7 +172,6 @@ const Game  = () => {
     const [click1, setClick1] = useState(null)
 
     const handleBoardClick = (boardCoord) => {
-        console.log(boardCoord)
         const local_history = history.slice(0, currentMoveNum+1);
         const snapshot = local_history[local_history.length - 1];
         if (!click1) {
