@@ -51,7 +51,9 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
     ); 
 }
 
-const Board = ({squares, currentMoveNum, reverse, onMove}) => {
+// const Board = ({squares, currentMoveNum, reverse, onMove}) => {
+const Board = ({squares, currentMoveNum, onMove}) => {
+    const [reverse, setReverse] = useState(false);
     const [click1, setClick1] = useState(null)
 
     const renderSquare = (piece, boardCoord) => {
@@ -106,10 +108,20 @@ const Board = ({squares, currentMoveNum, reverse, onMove}) => {
         return boardElement;
     }
 
+    const handleReverseClick = (reverseIn) => {
+        setReverse(reverseIn)
+        console.log('reverse')
+    }
+
     return (
-        <div className="game-board">
-            {renderBoard()}
-        </div>
+        <>
+            <button onClick={() => handleReverseClick(!reverse)}>
+                    {reverse ? '^' : 'v'}
+            </button>
+            <div className="game-board">
+                {renderBoard()}
+            </div>
+        </>
     );
 }
 
@@ -174,9 +186,6 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
     return (
         <div className="game-info">
             {status}&nbsp;
-            <button onClick={() => handleReverseClick(!reverse)}>
-                {reverse ? '^' : 'v'}
-            </button>
             <ChessListingGrid
                 moves={moves} 
                 currentMoveNum={currentMoveNum} 
@@ -187,7 +196,6 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
 }
 
 const Game  = () => {
-    const [reverse, setReverse] = useState(false);
     const [history, setHistory] = useState(
         [{
             // squares: init2DimArray(DIMS),
@@ -220,24 +228,17 @@ const Game  = () => {
         setCurrentMoveNum(moveNum);
     }
 
-    const handleReverseClick = (reverseIn) =>{
-        setReverse(reverseIn)
-    }
-
     return (
         <div className="game">
             <Board
                 squares={history[currentMoveNum].squares}
                 currentMoveNum={currentMoveNum}
                 onMove={handleMove}
-                reverse={reverse}
             />
             <GameInfo
                 history={history} 
                 currentMoveNum={currentMoveNum} 
-                reverse={reverse} 
                 handleListingClick={handleListingClick} 
-                handleReverseClick={handleReverseClick}
             />
         </div>
     );
