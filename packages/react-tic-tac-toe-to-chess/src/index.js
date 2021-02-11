@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const dims = 8;
-// const dims = 5;
+const DIMS = 8;
 
 const WHITE_KING = "\u2654";
 const WHITE_QUEEN = "\u2655";
@@ -53,7 +52,6 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
 }
 
 const Board = ({squares, currentMoveNum, reverse, onMove}) => {
-    console.log('board')
     const [click1, setClick1] = useState(null)
 
     const renderSquare = (piece, boardCoord) => {
@@ -62,7 +60,7 @@ const Board = ({squares, currentMoveNum, reverse, onMove}) => {
 
         return (
             <Square
-                key={boardCoord2key(dims, boardCoord)}
+                key={boardCoord2key(DIMS, boardCoord)}
                 piece={piece}
                 onClick={() => onClick(boardCoord)}
                 highlighted={highlighted}
@@ -72,7 +70,6 @@ const Board = ({squares, currentMoveNum, reverse, onMove}) => {
     }
 
     const onClick = (boardCoord) => {
-        console.log(currentMoveNum, squares)
         if (!click1) {
             if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
                 return
@@ -98,11 +95,11 @@ const Board = ({squares, currentMoveNum, reverse, onMove}) => {
         // generation of index with forEach
         let boardElement = [];
         if (reverse) {
-            for (let row=0; row < dims; row++) {
+            for (let row=0; row < DIMS; row++) {
                 boardElement.push(renderRow(squares[row], row))
             }
         } else {
-            for (let row=dims-1; row >= 0; row--) {
+            for (let row=DIMS-1; row >= 0; row--) {
                 boardElement.push(renderRow(squares[row], row))
             }
         }
@@ -160,11 +157,11 @@ const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
 }
 
 const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleReverseClick}) => {
-    // const winner = calculateWinner(dims, history[currentMoveNum].squares);
+    // const winner = calculateWinner(DIMS, history[currentMoveNum].squares);
     // let status;
     // if (winner) {
     //     status = 'Winner: ' + winner.winner;
-    // } else if (currentMoveNum === dims*dims) {
+    // } else if (currentMoveNum === DIMS*DIMS) {
     //     status = "Draw";
     // } else {
     //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
@@ -176,12 +173,10 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
 
     return (
         <div className="game-info">
-            <div>
-                {status}&nbsp;
-                <button onClick={() => handleReverseClick(!reverse)}>
-                    {reverse ? '^' : 'v'}
-                </button>
-            </div>
+            {status}&nbsp;
+            <button onClick={() => handleReverseClick(!reverse)}>
+                {reverse ? '^' : 'v'}
+            </button>
             <ChessListingGrid
                 moves={moves} 
                 currentMoveNum={currentMoveNum} 
@@ -195,7 +190,7 @@ const Game  = () => {
     const [reverse, setReverse] = useState(false);
     const [history, setHistory] = useState(
         [{
-            // squares: init2DimArray(dims),
+            // squares: init2DimArray(DIMS),
             squares: initPosition,
             boardCoord1: null,
             boardCoord2: null,
@@ -226,17 +221,16 @@ const Game  = () => {
     }
 
     const handleReverseClick = (reverseIn) =>{
-        console.log('reverseClick')
         setReverse(reverseIn)
     }
 
     return (
         <div className="game">
             <Board
+                squares={history[currentMoveNum].squares}
+                currentMoveNum={currentMoveNum}
                 onMove={handleMove}
                 reverse={reverse}
-                squares={history[currentMoveNum].squares}
-                currentMoveNum={currentMoveNum} 
             />
             <GameInfo
                 history={history} 
