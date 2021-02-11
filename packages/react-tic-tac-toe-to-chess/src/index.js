@@ -100,27 +100,6 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
     );
 }
 
-// const ChessListing = ({moves, currentMoveNum, handleClick}) => {
-//     const listingItems = moves.map((move, moveNum) => {
-//         const moveNumIndex = moveNum+1
-//         let desc = `${moveNum2Color(moveNumIndex-1)} ${move}`
-//         if (moveNumIndex === currentMoveNum) {
-//             desc = <b>{desc}</b>
-//         }
-//         return (
-//             <ul key={moveNumIndex}>
-//                 {moveNumIndex}. <button onClick={() => handleClick(moveNumIndex)}>{desc}</button>
-//             </ul>
-//         );
-//     });
-            
-//     return (
-//         <ol>
-//             {listingItems}
-//         </ol>
-//     )
-// }
-
 const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
     let tableMoves = []
     for (let i=0; i < moves.length; i+=2) {
@@ -134,7 +113,6 @@ const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
         return row.map((col, col_index) => {
             const index = `${row_index},${col_index}`
             const move = col.index+1===currentMoveNum ? <b>{col.move}</b> : col.move
-            console.log('nums', col.index+1, currentMoveNum)
             return col
                 ?
                     <div key={index} className="grid-cell" onClick={() => handleClick(col.index+1)}>{move}</div> 
@@ -210,30 +188,51 @@ const Game  = () => {
     const [click1, setClick1] = useState(null)
 
     const handleBoardClick = (boardCoord) => {
-        const local_history = history.slice(0, currentMoveNum+1);
-        const snapshot = local_history[local_history.length - 1];
         if (!click1) {
-            // Only continue if valid square, meaning has a piece of the player whose turn it is
-            if (piece2Color(snapshot.squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
+            const local_history = history.slice(0, currentMoveNum+1);
+            const snapshot = local_history[local_history.length - 1];
+            const squares = snapshot.squares
+                // Only continue if valid square, meaning has a piece of the player whose turn it is
+            if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
                 return
             }
             setClick1(boardCoord)
         } else {
             // Makes deep copy
-            const squares = snapshot.squares.map(function(arr) {
-                return arr.slice();
-            });
+            // const squares = snapshot.squares.map(function(arr) {
+            //     return arr.slice();
+            // });
+            // squares[boardCoord.row][boardCoord.col] = squares[click1.row][click1.col];
+            // squares[click1.row][click1.col] = '';
+            // local_history.push({
+            //     squares: squares,
+            //     boardCoord1: click1,
+            //     boardCoord2: boardCoord,
+            // });
+            // setHistory(local_history);
+            // setCurrentMoveNum(local_history.length-1);
+            handleMove(click1, boardCoord);
             setClick1(null);
-            squares[boardCoord.row][boardCoord.col] = squares[click1.row][click1.col];
-            squares[click1.row][click1.col] = '';
-            local_history.push({
-                squares: squares,
-                boardCoord1: click1,
-                boardCoord2: boardCoord,
-            });
-            setHistory(local_history);
-            setCurrentMoveNum(local_history.length-1);
         }
+    }
+
+    // Should only get here if legal move has been made
+    const handleMove = (click1, click2) => {
+        const local_history = history.slice(0, currentMoveNum+1);
+        const snapshot = local_history[local_history.length - 1];
+        // Makes deep copy
+        const squares = snapshot.squares.map(function(arr) {
+            return arr.slice();
+        });
+        squares[click2.row][click2.col] = squares[click1.row][click1.col];
+        squares[click1.row][click1.col] = '';
+        local_history.push({
+            squares: squares,
+            boardCoord1: click1,
+            boardCoord2: click2,
+        });
+        setHistory(local_history);
+        setCurrentMoveNum(local_history.length-1);
     }
 
     const handleListingClick = (moveNum) => {
