@@ -84,10 +84,10 @@ const Board = ({squares, currentMoveNum, onMove}) => {
     }
 
     const renderRow = (row, rowNum, boardElement) => {
-        const the_row =  row.map((col, colNum) => renderSquare(pieceLookup[col], {row: rowNum, col: colNum}))
+        const rowElement =  row.map((col, colNum) => renderSquare(pieceLookup[col], {row: rowNum, col: colNum}))
         return (
             <div key={100+rowNum} className="board-row">
-                {the_row}
+                {rowElement}
             </div>
         )
     }
@@ -95,16 +95,20 @@ const Board = ({squares, currentMoveNum, onMove}) => {
     const renderBoard = () => {
         // Really need the old school loops - reversing causes problems, as does auto
         // generation of index with forEach
+        const [startInd, endInd, indStep] = reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
         let boardElement = [];
-        if (reverse) {
-            for (let row=0; row < DIMS; row++) {
-                boardElement.push(renderRow(squares[row], row))
-            }
-        } else {
-            for (let row=DIMS-1; row >= 0; row--) {
-                boardElement.push(renderRow(squares[row], row))
-            }
+        for (let row=startInd; row !== endInd; row += indStep) {
+            boardElement.push(renderRow(squares[row], row))
         }
+        // if (reverse) {
+        //     for (let row=0; row < DIMS; row++) {
+        //         boardElement.push(renderRow(squares[row], row))
+        //     }
+        // } else {
+        //     for (let row=DIMS-1; row >= 0; row--) {
+        //         boardElement.push(renderRow(squares[row], row))
+        //     }
+        // }
         return boardElement;
     }
 

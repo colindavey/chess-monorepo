@@ -93,7 +93,7 @@ ol, ul {
     display: grid;
     /* grid-template-columns: repeat(3, 1fr); */
     /* grid-template-columns: auto auto auto; */
-    grid-template-columns: 20px 50px 50px;
+    grid-template-columns: 40px 55px 55px;
     grid-column-gap: 0px;
     /* grid-auto-rows: minmax(10px, auto); */
 }
@@ -109,7 +109,7 @@ div.scroll {
     /* margin:4px, 4px;  */
     /* padding:4px;  */
     background-color: #eee; 
-    width: 120px; 
+    width: 150px; 
     border: 1px solid black;
     height: 330px; 
     overflow-x: hidden; 
