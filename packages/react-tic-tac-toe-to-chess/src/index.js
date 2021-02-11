@@ -52,9 +52,12 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
     ); 
 }
 
-const Board = ({squares, reverse, onClick, highlightedSquares}) => {
+const Board = ({squares, currentMoveNum, reverse, onMove}) => {
+    console.log('board')
+    const [click1, setClick1] = useState(null)
+
     const renderSquare = (piece, boardCoord) => {
-        const highlighted = highlightedSquares ? (boardCoord.row === highlightedSquares.row && boardCoord.col === highlightedSquares.col) : false;
+        const highlighted = click1 ? (boardCoord.row === click1.row && boardCoord.col === click1.col) : false;
         const colorClass = (boardCoord.row % 2 === boardCoord.col % 2) ? "square-black" : "square-white"
 
         return (
@@ -66,6 +69,19 @@ const Board = ({squares, reverse, onClick, highlightedSquares}) => {
                 colorClass={colorClass}
             />
         );
+    }
+
+    const onClick = (boardCoord) => {
+        console.log(currentMoveNum, squares)
+        if (!click1) {
+            if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
+                return
+            }
+            setClick1(boardCoord)
+        } else {
+            setClick1(null)
+            onMove(click1, boardCoord)
+        }
     }
 
     const renderRow = (row, rowNum, boardElement) => {
@@ -185,36 +201,6 @@ const Game  = () => {
             boardCoord2: null,
         }])
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
-    const [click1, setClick1] = useState(null)
-
-    const handleBoardClick = (boardCoord) => {
-        if (!click1) {
-            const local_history = history.slice(0, currentMoveNum+1);
-            const snapshot = local_history[local_history.length - 1];
-            const squares = snapshot.squares
-                // Only continue if valid square, meaning has a piece of the player whose turn it is
-            if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
-                return
-            }
-            setClick1(boardCoord)
-        } else {
-            // Makes deep copy
-            // const squares = snapshot.squares.map(function(arr) {
-            //     return arr.slice();
-            // });
-            // squares[boardCoord.row][boardCoord.col] = squares[click1.row][click1.col];
-            // squares[click1.row][click1.col] = '';
-            // local_history.push({
-            //     squares: squares,
-            //     boardCoord1: click1,
-            //     boardCoord2: boardCoord,
-            // });
-            // setHistory(local_history);
-            // setCurrentMoveNum(local_history.length-1);
-            handleMove(click1, boardCoord);
-            setClick1(null);
-        }
-    }
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
@@ -247,10 +233,10 @@ const Game  = () => {
     return (
         <div className="game">
             <Board
-                squares={history[currentMoveNum].squares}
-                onClick={handleBoardClick}
+                onMove={handleMove}
                 reverse={reverse}
-                highlightedSquares={click1}
+                squares={history[currentMoveNum].squares}
+                currentMoveNum={currentMoveNum} 
             />
             <GameInfo
                 history={history} 
