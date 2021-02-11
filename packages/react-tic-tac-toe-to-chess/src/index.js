@@ -83,10 +83,16 @@ const Board = ({squares, currentMoveNum, onMove}) => {
         }
     }
 
-    const renderRow = (row, rowNum, boardElement) => {
-        const rowElement =  row.map((col, colNum) => renderSquare(pieceLookup[col], {row: rowNum, col: colNum}))
+    const renderRow = (row, rowInd, reverse) => {
+        const [startInd, endInd, indStep] = !reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
+    
+        let rowElement = [];
+        for (let colInd=startInd; colInd !== endInd; colInd += indStep) {
+            console.log('colInd', row)
+            rowElement.push(renderSquare(pieceLookup[row[colInd]], {row: rowInd, col: colInd}))
+        }
         return (
-            <div key={100+rowNum} className="board-row">
+            <div key={100+rowInd} className="board-row">
                 {rowElement}
             </div>
         )
@@ -97,18 +103,9 @@ const Board = ({squares, currentMoveNum, onMove}) => {
         // generation of index with forEach
         const [startInd, endInd, indStep] = reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
         let boardElement = [];
-        for (let row=startInd; row !== endInd; row += indStep) {
-            boardElement.push(renderRow(squares[row], row))
+        for (let rowInd=startInd; rowInd !== endInd; rowInd += indStep) {
+            boardElement.push(renderRow(squares[rowInd], rowInd, reverse))
         }
-        // if (reverse) {
-        //     for (let row=0; row < DIMS; row++) {
-        //         boardElement.push(renderRow(squares[row], row))
-        //     }
-        // } else {
-        //     for (let row=DIMS-1; row >= 0; row--) {
-        //         boardElement.push(renderRow(squares[row], row))
-        //     }
-        // }
         return boardElement;
     }
 
