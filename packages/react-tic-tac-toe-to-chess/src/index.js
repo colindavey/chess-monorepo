@@ -51,27 +51,27 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
     ); 
 }
 
-// const Board = ({squares, currentMoveNum, reverse, onMove}) => {
-const Board = ({squares, currentMoveNum, onMove}) => {
+const Board = ({squares, currentMoveNum, onMove, legalMoves}) => {
     const [reverse, setReverse] = useState(false);
     const [click1, setClick1] = useState(null)
 
     const renderSquare = (piece, boardCoord) => {
-        const highlighted = click1 ? (boardCoord.row === click1.row && boardCoord.col === click1.col) : false;
+        const clicked = click1 ? (boardCoord.row === click1.row && boardCoord.col === click1.col) : false;
+        const highlighted = click1 && (clicked || legalMoves.includes(boardCoord2uci(boardCoord)))
         const colorClass = (boardCoord.row % 2 === boardCoord.col % 2) ? "square-black" : "square-white"
 
         return (
             <Square
                 key={boardCoord2key(DIMS, boardCoord)}
                 piece={piece}
-                onClick={() => onClick(boardCoord)}
+                onClick={() => handleClick(boardCoord)}
                 highlighted={highlighted}
                 colorClass={colorClass}
             />
         );
     }
 
-    const onClick = (boardCoord) => {
+    const handleClick = (boardCoord) => {
         if (!click1) {
             if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
                 return
@@ -79,16 +79,17 @@ const Board = ({squares, currentMoveNum, onMove}) => {
             setClick1(boardCoord)
         } else {
             setClick1(null)
-            onMove(click1, boardCoord)
+            if (legalMoves.includes(boardCoord2uci(boardCoord))) {
+                onMove(click1, boardCoord);
+            }
         }
     }
 
     const renderRow = (row, rowInd, reverse) => {
         const [startInd, endInd, indStep] = !reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
-    
         let rowElement = [];
+
         for (let colInd=startInd; colInd !== endInd; colInd += indStep) {
-            console.log('colInd', row)
             rowElement.push(renderSquare(pieceLookup[row[colInd]], {row: rowInd, col: colInd}))
         }
         return (
@@ -103,6 +104,7 @@ const Board = ({squares, currentMoveNum, onMove}) => {
         // generation of index with forEach
         const [startInd, endInd, indStep] = reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
         let boardElement = [];
+    
         for (let rowInd=startInd; rowInd !== endInd; rowInd += indStep) {
             boardElement.push(renderRow(squares[rowInd], rowInd, reverse))
         }
@@ -111,7 +113,6 @@ const Board = ({squares, currentMoveNum, onMove}) => {
 
     const handleReverseClick = (reverseIn) => {
         setReverse(reverseIn)
-        console.log('reverse')
     }
 
     return (
@@ -186,7 +187,7 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
 
     return (
         <div className="game-info">
-            {status}&nbsp;
+            {status}
             <ChessListingGrid
                 moves={moves} 
                 currentMoveNum={currentMoveNum} 
@@ -205,6 +206,10 @@ const Game  = () => {
             boardCoord2: null,
         }])
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
+    const toyLegalMoves = [
+        'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4', 
+        'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5', 
+    ];
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
@@ -235,6 +240,7 @@ const Game  = () => {
                 squares={history[currentMoveNum].squares}
                 currentMoveNum={currentMoveNum}
                 onMove={handleMove}
+                legalMoves={toyLegalMoves}
             />
             <GameInfo
                 history={history} 
@@ -245,12 +251,12 @@ const Game  = () => {
     );
 }
 
-// ========================================
-
 ReactDOM.render(
     <Game />,
     document.getElementById('root')
 );
+
+// ========================================
 
 function piece2Color(piece) {
     if (!piece) {
@@ -262,8 +268,6 @@ function piece2Color(piece) {
 function moveNum2Color(moveNum) {
     return ((moveNum % 2) === 0) ? 'W' : 'B';
 }
-
-/* 2D functions */
 
 function boardCoord2key(nDims, boardCoord) {
     return (nDims * boardCoord.row) + boardCoord.col
