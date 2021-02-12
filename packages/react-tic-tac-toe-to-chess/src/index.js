@@ -142,7 +142,7 @@ const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
             const move = col.index+1===currentMoveNum ? <b>{col.move}</b> : col.move
             return col
                 ?
-                    <div key={index} className="grid-cell" onClick={() => handleClick(col.index+1)}>{move}</div> 
+                    <div key={index} className="grid-cell grid-cell-button" onClick={() => handleClick(col.index+1)}>{move}</div> 
                 :
                     <div key={index} className="grid-cell"></div> 
         })
@@ -163,7 +163,7 @@ const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
     return (
         <div className="scroll">
             <div className="grid-top-row">
-                <div className="grid-cell" onClick={() => handleClick(0)}>Starting position</div>
+                <div className="grid-cell grid-cell-button" onClick={() => handleClick(0)}>Starting position</div>
             </div>
             {listing}
         </div>

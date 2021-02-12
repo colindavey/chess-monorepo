@@ -89,6 +89,10 @@ ol, ul {
     /* width: 34px; */
 }
 
+.grid-cell-button:hover {
+    background-color: #eee;
+}
+
 .grid-wrapper {
     display: grid;
     /* grid-template-columns: repeat(3, 1fr); */
