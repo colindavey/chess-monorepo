@@ -72,12 +72,23 @@ const Board = ({squares, currentMoveNum, onMove, legalMoves}) => {
     }
 
     const handleClick = (boardCoord) => {
-        if (!click1) {
-            if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
-                return
-            }
+        // if (!click1) {
+        //     if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
+        //         return
+        //     }
+        //     setClick1(boardCoord)
+        // } else {
+        //     setClick1(null)
+        //     if (legalMoves.includes(boardCoord2uci(boardCoord))) {
+        //         onMove(click1, boardCoord);
+        //     }
+        // }
+        if (piece2Color(squares[boardCoord.row][boardCoord.col]) === moveNum2Color(currentMoveNum)) {
             setClick1(boardCoord)
         } else {
+            if (!click1) {
+                return
+            }
             setClick1(null)
             if (legalMoves.includes(boardCoord2uci(boardCoord))) {
                 onMove(click1, boardCoord);
