@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import * as chess_api from './chess_api.js'; 
 
 const DIMS = 8;
 
@@ -30,17 +31,6 @@ const pieceLookup = {
     n: BLACK_KNIGHT,
     p: BLACK_PAWN,
 }
-const initPosition = 
-[
-    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
-    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-]
 
 const Square = ({onClick, piece, highlighted, colorClass}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
@@ -51,13 +41,14 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
     ); 
 }
 
-const Board = ({squares, currentMoveNum, onMove, legalMoves}) => {
+const Board = ({squares, turn, onMove, legalMoves}) => {
     const [reverse, setReverse] = useState(false);
     const [click1, setClick1] = useState(null)
+    const [legalDests, setLegalDests] = useState([])
 
     const renderSquare = (piece, boardCoord) => {
         const clicked = click1 ? (boardCoord.row === click1.row && boardCoord.col === click1.col) : false;
-        const highlighted = click1 && (clicked || legalMoves.includes(boardCoord2uci(boardCoord)))
+        const highlighted = click1 && (clicked || legalDests.includes(boardCoord2uci(boardCoord)))
         const colorClass = (boardCoord.row % 2 === boardCoord.col % 2) ? "square-black" : "square-white"
 
         return (
@@ -72,27 +63,19 @@ const Board = ({squares, currentMoveNum, onMove, legalMoves}) => {
     }
 
     const handleClick = (boardCoord) => {
-        // if (!click1) {
-        //     if (piece2Color(squares[boardCoord.row][boardCoord.col]) !== moveNum2Color(currentMoveNum)) {
-        //         return
-        //     }
-        //     setClick1(boardCoord)
-        // } else {
-        //     setClick1(null)
-        //     if (legalMoves.includes(boardCoord2uci(boardCoord))) {
-        //         onMove(click1, boardCoord);
-        //     }
-        // }
-        if (piece2Color(squares[boardCoord.row][boardCoord.col]) === moveNum2Color(currentMoveNum)) {
+        if (piece2Color(squares[boardCoord.row][boardCoord.col]) === turn) {
             setClick1(boardCoord)
+            const legalDests = getLegalDestsFrom(boardCoord, legalMoves);
+            console.log("legalDests", legalDests)
+            setLegalDests(legalDests)
         } else {
             if (!click1) {
                 return
             }
-            setClick1(null)
-            if (legalMoves.includes(boardCoord2uci(boardCoord))) {
+            if (legalDests.includes(boardCoord2uci(boardCoord))) {
                 onMove(click1, boardCoord);
             }
+            setClick1(null)
         }
     }
 
@@ -181,7 +164,7 @@ const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
     )
 }
 
-const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleReverseClick}) => {
+const GameInfo = ({moves, currentMoveNum, handleListingClick}) => {
     // const winner = calculateWinner(DIMS, history[currentMoveNum].squares);
     // let status;
     // if (winner) {
@@ -193,8 +176,6 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
     // }
     let status;
     status = 'Next player: ' + moveNum2Color(currentMoveNum);
-
-    const moves = history.slice(1).map(snapshot => `${boardCoord2uci(snapshot.boardCoord1)}${boardCoord2uci(snapshot.boardCoord2)}`)
 
     return (
         <div className="game-info">
@@ -209,52 +190,43 @@ const GameInfo = ({history, currentMoveNum, reverse, handleListingClick, handleR
 }
 
 const Game  = () => {
-    const [history, setHistory] = useState(
-        [{
-            // squares: init2DimArray(DIMS),
-            squares: initPosition,
-            boardCoord1: null,
-            boardCoord2: null,
-        }])
+    const initGameState = chess_api.init();
+    // const [gameState, setGameState] = useState(initGameState);
+    const [moves, setMoves] = useState([]);
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
-    const toyLegalMoves = [
-        'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4', 
-        'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5', 
-    ];
+    const [position, setPosition] = useState(initGameState.position)
+    const [legalMoves, setLegalMoves] = useState(initGameState.legal_moves)
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
-        const local_history = history.slice(0, currentMoveNum+1);
-        const snapshot = local_history[local_history.length - 1];
-        // Makes deep copy
-        const squares = snapshot.squares.map(function(arr) {
-            return arr.slice();
-        });
-        squares[click2.row][click2.col] = squares[click1.row][click1.col];
-        squares[click1.row][click1.col] = '';
-        local_history.push({
-            squares: squares,
-            boardCoord1: click1,
-            boardCoord2: click2,
-        });
-        setHistory(local_history);
-        setCurrentMoveNum(local_history.length-1);
+        const chessApiState = chess_api.move_add(moves, `${boardCoord2uci(click1)}${boardCoord2uci(click2)}`);
+        setMoves(chessApiState.moves);
+        updateState(chessApiState, moves.length+1);
     }
 
     const handleListingClick = (moveNum) => {
+        const chessApiState = chess_api.move_to(moves.slice(0, moveNum));
+        // setMoves(chessApiState.moves);
+        updateState(chessApiState, moveNum);
+    }
+
+    const updateState = ({position, legal_moves}, moveNum) => {
+        // setGameState(chessApiState);
+        setPosition(position);
+        setLegalMoves(legal_moves)
         setCurrentMoveNum(moveNum);
     }
 
     return (
         <div className="game">
             <Board
-                squares={history[currentMoveNum].squares}
-                currentMoveNum={currentMoveNum}
+                squares={position}
+                turn={moveNum2Color(currentMoveNum)}
                 onMove={handleMove}
-                legalMoves={toyLegalMoves}
+                legalMoves={legalMoves}
             />
             <GameInfo
-                history={history} 
+                moves={moves}
                 currentMoveNum={currentMoveNum} 
                 handleListingClick={handleListingClick} 
             />
@@ -288,4 +260,17 @@ function boardCoord2uci(boardCoord) {
     const file = String.fromCharCode('a'.charCodeAt()+boardCoord.col)
     const rank = boardCoord.row+1;
     return `${file}${rank}`;
+}
+
+// function uci2boardCoord(uci) {
+//     return {row: parseInt(uci.slice(1))-1, col: uci.slice(0, 1).charCodeAt() - "a".charCodeAt()}
+// }
+
+function getLegalDestsFrom(boardCoord, legalMoves) {
+    const startCoord = boardCoord2uci(boardCoord);
+    // filter the legal moves down to those starting from the boardCoord
+    const legalMovesFiltered = legalMoves.filter( m => m.slice(0, 2) === startCoord );
+    // e.g. maps ["e2e3", "e2e4"] to ["e3", "e4"] 
+    const legalDests = legalMovesFiltered.map( m => m.slice(2));
+    return legalDests
 }
