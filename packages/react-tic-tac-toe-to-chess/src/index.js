@@ -189,7 +189,25 @@ const GameInfo = ({moves, currentMoveNum, handleListingClick}) => {
     )
 }
 
-const Game  = () => {
+const Game  = ({position, currentMoveNum, legalMoves, moves, handleMove, handleListingClick}) => {
+    return (
+        <div className="game">
+            <Board
+                position={position}
+                turn={moveNum2Color(currentMoveNum)}
+                onMove={handleMove}
+                legalMoves={legalMoves}
+            />
+            <GameInfo
+                moves={moves}
+                currentMoveNum={currentMoveNum} 
+                handleListingClick={handleListingClick} 
+            />
+        </div>
+    );
+}
+
+const App  = () => {
     const initGameState = chess_api.init();
     // const [gameState, setGameState] = useState(initGameState);
     const [moves, setMoves] = useState([]);
@@ -219,24 +237,20 @@ const Game  = () => {
     }
 
     return (
-        <div className="game">
-            <Board
-                position={position}
-                turn={moveNum2Color(currentMoveNum)}
-                onMove={handleMove}
-                legalMoves={legalMoves}
-            />
-            <GameInfo
-                moves={moves}
-                currentMoveNum={currentMoveNum} 
-                handleListingClick={handleListingClick} 
-            />
-        </div>
+        <Game
+            position={position}
+            turn={moveNum2Color(currentMoveNum)}
+            legalMoves={legalMoves}
+            moves={moves}
+            currentMoveNum={currentMoveNum} 
+            handleMove={handleMove}
+            handleListingClick={handleListingClick} 
+        />
     );
 }
 
 ReactDOM.render(
-    <Game />,
+    <App />,
     document.getElementById('root')
 );
 
