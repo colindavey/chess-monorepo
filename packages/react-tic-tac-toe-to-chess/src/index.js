@@ -41,7 +41,7 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
     ); 
 }
 
-const Board = ({squares, turn, onMove, legalMoves}) => {
+const Board = ({position, turn, onMove, legalMoves}) => {
     const [reverse, setReverse] = useState(false);
     const [click1, setClick1] = useState(null)
     const [legalDests, setLegalDests] = useState([])
@@ -63,7 +63,7 @@ const Board = ({squares, turn, onMove, legalMoves}) => {
     }
 
     const handleClick = (boardCoord) => {
-        if (piece2Color(squares[boardCoord.row][boardCoord.col]) === turn) {
+        if (piece2Color(position[boardCoord.row][boardCoord.col]) === turn) {
             setClick1(boardCoord)
             const legalDests = getLegalDestsFrom(boardCoord, legalMoves);
             console.log("legalDests", legalDests)
@@ -100,7 +100,7 @@ const Board = ({squares, turn, onMove, legalMoves}) => {
         let boardElement = [];
     
         for (let rowInd=startInd; rowInd !== endInd; rowInd += indStep) {
-            boardElement.push(renderRow(squares[rowInd], rowInd, reverse))
+            boardElement.push(renderRow(position[rowInd], rowInd, reverse))
         }
         return boardElement;
     }
@@ -199,9 +199,10 @@ const Game  = () => {
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
-        const chessApiState = chess_api.move_add(moves, `${boardCoord2uci(click1)}${boardCoord2uci(click2)}`);
+        const local_moves = moves.slice(0, currentMoveNum)
+        const chessApiState = chess_api.move_add(local_moves, `${boardCoord2uci(click1)}${boardCoord2uci(click2)}`);
         setMoves(chessApiState.moves);
-        updateState(chessApiState, moves.length+1);
+        updateState(chessApiState, local_moves.length+1);
     }
 
     const handleListingClick = (moveNum) => {
@@ -220,7 +221,7 @@ const Game  = () => {
     return (
         <div className="game">
             <Board
-                squares={position}
+                position={position}
                 turn={moveNum2Color(currentMoveNum)}
                 onMove={handleMove}
                 legalMoves={legalMoves}
