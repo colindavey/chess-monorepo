@@ -155,11 +155,14 @@ const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
     })
 
     return (
-        <div className="scroll">
-            <div className="grid-top-row">
-                <div className="grid-cell grid-cell-button" onClick={() => handleClick(0)}>Starting position</div>
+        <div>
+            <div className="scroll">
+                {listing}
             </div>
-            {listing}
+            <button onClick={() => handleClick(0)}>|&#60;</button>
+            <button onClick={() => handleClick(Math.max(currentMoveNum-1, 0))}>&#60;</button>
+            <button onClick={() => handleClick(Math.min(currentMoveNum+1, moves.length))}>&#62;</button>
+            <button onClick={() => handleClick(moves.length)}>&#62;|</button>
         </div>
     )
 }
