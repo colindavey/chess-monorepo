@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import Square from './square.js';
 import './index.css';
 import * as chess_api from './chess_api.js'; 
 
@@ -30,15 +31,6 @@ const pieceLookup = {
     b: BLACK_BISHOP,
     n: BLACK_KNIGHT,
     p: BLACK_PAWN,
-}
-
-const Square = ({onClick, piece, highlighted, colorClass}) => {
-    const highlightClass = highlighted ? "square-highlighted" : '';
-    return (
-        <button className={`square ${highlightClass} ${colorClass}`} onClick={onClick}>
-            {piece}
-        </button>
-    ); 
 }
 
 const Board = ({position, turn, onMove, legalMoves}) => {
