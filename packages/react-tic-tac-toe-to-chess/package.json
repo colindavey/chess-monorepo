@@ -9,7 +9,8 @@
     "chess.js": "^0.11.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "components": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

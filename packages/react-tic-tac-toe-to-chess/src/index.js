@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import Square from './square.js';
+import {Square} from 'components';
 import './index.css';
 import * as chess_api from './chess_api.js'; 
 
