@@ -23,6 +23,9 @@
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build"
   },
+  "dependencies": {
+    "chess.js": "^0.11.0"
+  },
   "peerDependencies": {
     "react": "^16.0.0"
   },

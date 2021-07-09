@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import React, { useState } from 'react';
-// import {Square} from './square.js';
-const DIMS = 8;
+import React, { useState } from 'react'
+import * as chessUtils from './chess_utils.js'
+const DIMS = 8
 
-const WHITE_KING = "\u2654";
+const WHITE_KING = "\u2654"
 const WHITE_QUEEN = "\u2655";
 const WHITE_ROOK = "\u2656";
 const WHITE_BISHOP = "\u2657";
@@ -30,16 +30,6 @@ const pieceLookup = {
     p: BLACK_PAWN,
 }
 
-function boardCoord2key(nDims, boardCoord) {
-    return (nDims * boardCoord.row) + boardCoord.col
-}
-
-function boardCoord2uci(boardCoord) {
-    const file = String.fromCharCode('a'.charCodeAt()+boardCoord.col)
-    const rank = boardCoord.row+1;
-    return `${file}${rank}`;
-}
-
 const Square = ({onClick, piece, highlighted, colorClass}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
     return (
@@ -50,15 +40,16 @@ const Square = ({onClick, piece, highlighted, colorClass}) => {
 }
 
 const DumbBoard = ({position, highlightList, handleClick}) => {
+    console.log(position)
     const [reverse, setReverse] = useState(false);
 
     const renderSquare = (piece, boardCoord) => {
-        const highlighted = highlightList.includes(boardCoord2uci(boardCoord))
+        const highlighted = highlightList.includes(chessUtils.boardCoord2uci(boardCoord))
         const colorClass = (boardCoord.row % 2 === boardCoord.col % 2) ? "square-black" : "square-white"
 
         return (
             <Square
-                key={boardCoord2key(DIMS, boardCoord)}
+                key={chessUtils.boardCoord2key(DIMS, boardCoord)}
                 piece={piece}
                 onClick={() => handleClick(boardCoord)}
                 highlighted={highlighted}

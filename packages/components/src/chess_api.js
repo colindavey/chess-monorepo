@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import Chess from 'chess.js';
 
 const chess_api_state = (game) => {
