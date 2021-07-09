@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import DumbBoard from "./dumbBoard";
-import * as chess_api from './chess_api.js'; 
-import * as chess_utils from './chess_utils.js'; 
+import * as chessApi from './chessApi.js'; 
+import * as chessUtils from './chessUtils.js'; 
 
 const SmartBoard = ({position, turn, onMove, legalMoves}) => {
     const [click1, setClick1] = useState(null)
@@ -10,18 +10,18 @@ const SmartBoard = ({position, turn, onMove, legalMoves}) => {
     const [highlightList, setHighlightList] = useState([])
 
     const handleClick = (boardCoord) => {
-        if (chess_utils.piece2Color(position[boardCoord.row][boardCoord.col]) === turn) {
+        if (chessUtils.piece2Color(position[boardCoord.row][boardCoord.col]) === turn) {
             setClick1(boardCoord)
-            const legalDests = chess_utils.getLegalDestsFrom(boardCoord, legalMoves);
+            const legalDests = chessUtils.getLegalDestsFrom(boardCoord, legalMoves);
             setLegalDests(legalDests)
             const highlightList = legalDests
-            highlightList.push(chess_utils.boardCoord2uci(boardCoord))
+            highlightList.push(chessUtils.boardCoord2uci(boardCoord))
             setHighlightList(highlightList)
         } else {
             if (!click1) {
                 return
             }
-            if (legalDests.includes(chess_utils.boardCoord2uci(boardCoord))) {
+            if (legalDests.includes(chessUtils.boardCoord2uci(boardCoord))) {
                 onMove(click1, boardCoord);
             }
             setClick1(null)
@@ -95,7 +95,7 @@ const GameInfo = ({moves, currentMoveNum, handleListingClick}) => {
     //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
     // }
     let status;
-    status = 'Next player: ' + chess_utils.moveNum2Color(currentMoveNum);
+    status = 'Next player: ' + chessUtils.moveNum2Color(currentMoveNum);
 
     return (
         <div className="game-info">
@@ -114,7 +114,7 @@ const GameView  = ({position, currentMoveNum, legalMoves, moves, handleMove, han
         <div className="game">
             <SmartBoard
                 position={position}
-                turn={chess_utils.moveNum2Color(currentMoveNum)}
+                turn={chessUtils.moveNum2Color(currentMoveNum)}
                 onMove={handleMove}
                 legalMoves={legalMoves}
             />
@@ -128,7 +128,7 @@ const GameView  = ({position, currentMoveNum, legalMoves, moves, handleMove, han
 }
 
 const Game  = () => {
-    const initGameState = chess_api.init();
+    const initGameState = chessApi.init();
     // const [gameState, setGameState] = useState(initGameState);
     const [moves, setMoves] = useState([]);
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
@@ -138,13 +138,13 @@ const Game  = () => {
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
         const local_moves = moves.slice(0, currentMoveNum)
-        const chessApiState = chess_api.move_add(local_moves, `${chess_utils.boardCoord2uci(click1)}${chess_utils.boardCoord2uci(click2)}`);
+        const chessApiState = chessApi.move_add(local_moves, `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(click2)}`);
         setMoves(chessApiState.moves);
         updateState(chessApiState, local_moves.length+1);
     }
 
     const handleListingClick = (moveNum) => {
-        const chessApiState = chess_api.move_to(moves.slice(0, moveNum));
+        const chessApiState = chessApi.move_to(moves.slice(0, moveNum));
         // setMoves(chessApiState.moves);
         updateState(chessApiState, moveNum);
     }
@@ -159,7 +159,7 @@ const Game  = () => {
     return (
         <GameView
             position={position}
-            turn={chess_utils.moveNum2Color(currentMoveNum)}
+            turn={chessUtils.moveNum2Color(currentMoveNum)}
             legalMoves={legalMoves}
             moves={moves}
             currentMoveNum={currentMoveNum} 
