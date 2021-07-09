@@ -9,9 +9,15 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
     const [highlightList, setHighlightList] = useState([])
 
     const handleClick = boardCoord => {
-        if (chessUtils.piece2Color(position[boardCoord.row][boardCoord.col]) === turn) {
+        if (
+            chessUtils.piece2Color(position[boardCoord.row][boardCoord.col]) ===
+            turn
+        ) {
             setClick1(boardCoord)
-            const legalDests = chessUtils.getLegalDestsFrom(boardCoord, legalMoves)
+            const legalDests = chessUtils.getLegalDestsFrom(
+                boardCoord,
+                legalMoves
+            )
             setLegalDests(legalDests)
             const highlightList = legalDests
             highlightList.push(chessUtils.boardCoord2uci(boardCoord))
@@ -49,12 +55,21 @@ const ChessListingGrid = ({ moves, currentMoveNum, handleClick }) => {
     const renderCol = (row, rowIndex) => {
         return row.map((col, colIndex) => {
             const index = `${rowIndex},${colIndex}`
-            const move = col.index + 1 === currentMoveNum ? <b>{col.move}</b> : col.move
+            const move =
+                col.index + 1 === currentMoveNum ? <b>{col.move}</b> : col.move
+            /* eslint-disable */
             return col
                 ?
-                    <div key={index} className="grid-cell grid-cell-button" onClick={() => handleClick(col.index+1)}>{move}</div> 
+                    <div
+                        key={index}
+                        className='grid-cell grid-cell-button'
+                        onClick={() => handleClick(col.index+1)}
+                    >
+                        {move}
+                    </div>
                 :
-                    <div key={index} className="grid-cell"/> 
+                    <div key={index} className='grid-cell'/>
+            /* eslint-enable */
         })
     }
 
@@ -72,8 +87,18 @@ const ChessListingGrid = ({ moves, currentMoveNum, handleClick }) => {
         <div>
             <div className='scroll'>{listing}</div>
             <button onClick={() => handleClick(0)}>|&#60;</button>
-            <button onClick={() => handleClick(Math.max(currentMoveNum-1, 0))}>&#60;</button>
-            <button onClick={() => handleClick(Math.min(currentMoveNum+1, moves.length))}>&#62;</button>
+            <button
+                onClick={() => handleClick(Math.max(currentMoveNum - 1, 0))}
+            >
+                &#60;
+            </button>
+            <button
+                onClick={() =>
+                    handleClick(Math.min(currentMoveNum + 1, moves.length))
+                }
+            >
+                &#62;
+            </button>
             <button onClick={() => handleClick(moves.length)}>&#62;|</button>
         </div>
     )
@@ -103,7 +128,14 @@ const GameInfo = ({ moves, currentMoveNum, handleListingClick }) => {
     )
 }
 
-const GameView  = ({ position, currentMoveNum, legalMoves, moves, handleMove, handleListingClick }) => {
+const GameView = ({
+    position,
+    currentMoveNum,
+    legalMoves,
+    moves,
+    handleMove,
+    handleListingClick
+}) => {
     return (
         <div className='game'>
             <SmartBoard
@@ -132,13 +164,18 @@ const Game = () => {
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
         const localMoves = moves.slice(0, currentMoveNum)
-        const chessApiState = chessApi.moveAdd(localMoves, `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(click2)}`);
+        const chessApiState = chessApi.moveAdd(
+            localMoves,
+            `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(
+                click2
+            )}`
+        )
         setMoves(chessApiState.moves)
         updateState(chessApiState, localMoves.length + 1)
     }
 
     const handleListingClick = moveNum => {
-        const chessApiState = chessApi.moveTo(moves.slice(0, moveNum));
+        const chessApiState = chessApi.moveTo(moves.slice(0, moveNum))
         // setMoves(chessApiState.moves)
         updateState(chessApiState, moveNum)
     }

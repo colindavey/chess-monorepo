@@ -32,7 +32,10 @@ const pieceLookup = {
 const Square = ({ onClick, piece, highlighted, colorClass }) => {
     const highlightClass = highlighted ? 'square-highlighted' : ''
     return (
-        <button className={`square ${highlightClass} ${colorClass}`} onClick={onClick}>
+        <button
+            className={`square ${highlightClass} ${colorClass}`}
+            onClick={onClick}
+        >
             {piece}
         </button>
     )
@@ -42,8 +45,13 @@ const DumbBoard = ({ position, highlightList, handleClick }) => {
     const [reverse, setReverse] = useState(false)
 
     const renderSquare = (piece, boardCoord) => {
-        const highlighted = highlightList.includes(chessUtils.boardCoord2uci(boardCoord))
-        const colorClass = (boardCoord.row % 2 === boardCoord.col % 2) ? 'square-black' : 'square-white'
+        const highlighted = highlightList.includes(
+            chessUtils.boardCoord2uci(boardCoord)
+        )
+        const colorClass =
+            boardCoord.row % 2 === boardCoord.col % 2
+                ? 'square-black'
+                : 'square-white'
 
         return (
             <Square
@@ -57,11 +65,18 @@ const DumbBoard = ({ position, highlightList, handleClick }) => {
     }
 
     const renderRow = (row, rowInd, reverse) => {
-        const [startInd, endInd, indStep] = !reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
+        const [startInd, endInd, indStep] = !reverse
+            ? [0, DIMS, 1]
+            : [DIMS - 1, -1, -1]
         const rowElement = []
 
         for (let colInd = startInd; colInd !== endInd; colInd += indStep) {
-            rowElement.push(renderSquare(pieceLookup[row[colInd]], {row: rowInd, col: colInd}))
+            rowElement.push(
+                renderSquare(pieceLookup[row[colInd]], {
+                    row: rowInd,
+                    col: colInd
+                })
+            )
         }
         return (
             <div key={100 + rowInd} className='board-row'>
@@ -73,7 +88,9 @@ const DumbBoard = ({ position, highlightList, handleClick }) => {
     const renderBoard = () => {
         // Really need the old school loops - reversing causes problems, as does auto
         // generation of index with forEach
-        const [startInd, endInd, indStep] = reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
+        const [startInd, endInd, indStep] = reverse
+            ? [0, DIMS, 1]
+            : [DIMS - 1, -1, -1]
         const boardElement = []
 
         for (let rowInd = startInd; rowInd !== endInd; rowInd += indStep) {
