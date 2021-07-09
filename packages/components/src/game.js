@@ -138,13 +138,13 @@ const Game  = () => {
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
         const local_moves = moves.slice(0, currentMoveNum)
-        const chessApiState = chessApi.move_add(local_moves, `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(click2)}`);
+        const chessApiState = chessApi.moveAdd(local_moves, `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(click2)}`);
         setMoves(chessApiState.moves);
         updateState(chessApiState, local_moves.length+1);
     }
 
     const handleListingClick = (moveNum) => {
-        const chessApiState = chessApi.move_to(moves.slice(0, moveNum));
+        const chessApiState = chessApi.moveTo(moves.slice(0, moveNum));
         // setMoves(chessApiState.moves);
         updateState(chessApiState, moveNum);
     }
