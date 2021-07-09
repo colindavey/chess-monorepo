@@ -1,21 +1,23 @@
 import Chess from 'chess.js'
 
-const chessApiState = (game) => {
+const chessApiState = game => {
     const legalMoves = game.moves({ verbose: true })
-    const mappedMoves = legalMoves.map(move => `${move.from}${move.to}`);
+    const mappedMoves = legalMoves.map(move => `${move.from}${move.to}`)
+    /* eslint-disable */
     return {
-        chess_ob: game, 
-        moves: game.history(), 
-        legal_moves: mappedMoves, 
+        chess_ob: game,
+        moves: game.history(),
+        legalMoves: mappedMoves,
         position: game.board().map(
             row => row.map(
-                el => 
-                el ? 
-                    el.color === 'b' ? el.type : el.type.toUpperCase()
-                : ''
-                )
+                el =>
+                el
+                    ? el.color === 'b' ? el.type : el.type.toUpperCase()
+                    : ''
+            )
         ).reverse()
     }
+    /* eslint-enable */
 }
 
 export const calcGame = moves => {
@@ -27,17 +29,17 @@ export const calcGame = moves => {
 }
 
 export const init = () => {
-    const game = calcGame([]);
-    return chessApiState(game);
+    const game = calcGame([])
+    return chessApiState(game)
 }
 
-export const moveTo = (moves) => {
-    const game = calcGame(moves);
-    return chessApiState(game);
+export const moveTo = moves => {
+    const game = calcGame(moves)
+    return chessApiState(game)
 }
 
 export const moveAdd = (moves, newMove) => {
-    const game = calcGame(moves);
-    game.move(newMove, {sloppy: true});
-    return chessApiState(game);
+    const game = calcGame(moves)
+    game.move(newMove, { sloppy: true })
+    return chessApiState(game)
 }

@@ -39,7 +39,7 @@ const SmartBoard = ({position, turn, onMove, legalMoves}) => {
 }
 
 const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
-    let tableMoves = []
+    const tableMoves = []
     for (let i=0; i < moves.length; i+=2) {
         tableMoves.push([
             {move: moves[i], index: i},
@@ -47,15 +47,15 @@ const ChessListingGrid = ({moves, currentMoveNum, handleClick}) => {
         ])
     }
 
-    const renderCol = (row, row_index) => {
-        return row.map((col, col_index) => {
-            const index = `${row_index},${col_index}`
+    const renderCol = (row, rowIndex) => {
+        return row.map((col, colIndex) => {
+            const index = `${rowIndex},${colIndex}`
             const move = col.index+1===currentMoveNum ? <b>{col.move}</b> : col.move
             return col
                 ?
                     <div key={index} className="grid-cell grid-cell-button" onClick={() => handleClick(col.index+1)}>{move}</div> 
                 :
-                    <div key={index} className="grid-cell"></div> 
+                    <div key={index} className="grid-cell"/> 
         })
     }
 
@@ -94,8 +94,7 @@ const GameInfo = ({moves, currentMoveNum, handleListingClick}) => {
     // } else {
     //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
     // }
-    let status;
-    status = 'Next player: ' + chessUtils.moveNum2Color(currentMoveNum);
+    const status = 'Next player: ' + chessUtils.moveNum2Color(currentMoveNum);
 
     return (
         <div className="game-info">
@@ -133,14 +132,14 @@ const Game  = () => {
     const [moves, setMoves] = useState([]);
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
     const [position, setPosition] = useState(initGameState.position)
-    const [legalMoves, setLegalMoves] = useState(initGameState.legal_moves)
+    const [legalMoves, setLegalMoves] = useState(initGameState.legalMoves)
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
-        const local_moves = moves.slice(0, currentMoveNum)
-        const chessApiState = chessApi.moveAdd(local_moves, `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(click2)}`);
+        const localMoves = moves.slice(0, currentMoveNum)
+        const chessApiState = chessApi.moveAdd(localMoves, `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(click2)}`);
         setMoves(chessApiState.moves);
-        updateState(chessApiState, local_moves.length+1);
+        updateState(chessApiState, localMoves.length+1);
     }
 
     const handleListingClick = (moveNum) => {
@@ -149,10 +148,10 @@ const Game  = () => {
         updateState(chessApiState, moveNum);
     }
 
-    const updateState = ({position, legal_moves}, moveNum) => {
+    const updateState = ({position, legalMoves}, moveNum) => {
         // setGameState(chessApiState);
         setPosition(position);
-        setLegalMoves(legal_moves)
+        setLegalMoves(legalMoves)
         setCurrentMoveNum(moveNum);
     }
 
