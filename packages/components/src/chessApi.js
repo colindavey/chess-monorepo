@@ -1,5 +1,16 @@
 import Chess from 'chess.js'
 
+export const emptyPosition = [
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '']
+]
+
 const chessApiState = game => {
     const legalMoves = game.moves({ verbose: true })
     const mappedMoves = legalMoves.map(move => `${move.from}${move.to}`)
