@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
-import * as chessUtils from './chess_utils.js'
+import * as chessUtils from './chessUtils.js'
 const DIMS = 8
 
 const WHITE_KING = "\u2654"
