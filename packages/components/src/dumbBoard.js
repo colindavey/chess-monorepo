@@ -69,7 +69,7 @@ const DumbBoard = ({position, highlightList, handleClick}) => {
 
     const renderRow = (row, rowInd, reverse) => {
         const [startInd, endInd, indStep] = !reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
-        let rowElement = [];
+        const rowElement = [];
 
         for (let colInd=startInd; colInd !== endInd; colInd += indStep) {
             rowElement.push(renderSquare(pieceLookup[row[colInd]], {row: rowInd, col: colInd}))
@@ -85,7 +85,7 @@ const DumbBoard = ({position, highlightList, handleClick}) => {
         // Really need the old school loops - reversing causes problems, as does auto
         // generation of index with forEach
         const [startInd, endInd, indStep] = reverse ? [0, DIMS, 1] : [DIMS-1, -1, -1]
-        let boardElement = [];
+        const boardElement = [];
     
         for (let rowInd=startInd; rowInd !== endInd; rowInd += indStep) {
             boardElement.push(renderRow(position[rowInd], rowInd, reverse))
@@ -98,14 +98,14 @@ const DumbBoard = ({position, highlightList, handleClick}) => {
     }
 
     return (
-        <>
+        <div>
             <button onClick={() => handleReverseClick(!reverse)}>
                 {reverse ? '^' : 'v'}
             </button>
             <div className="game-board">
                 {renderBoard()}
             </div>
-        </>
+        </div>
     );
 }
 
