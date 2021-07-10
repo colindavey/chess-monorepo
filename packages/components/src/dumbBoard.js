@@ -2,33 +2,6 @@ import React, { useState } from 'react'
 import * as chessUtils from './chessUtils.js'
 const DIMS = 8
 
-const WHITE_KING = '\u2654'
-const WHITE_QUEEN = '\u2655'
-const WHITE_ROOK = '\u2656'
-const WHITE_BISHOP = '\u2657'
-const WHITE_KNIGHT = '\u2658'
-const WHITE_PAWN = '\u2659'
-const BLACK_KING = '\u265A'
-const BLACK_QUEEN = '\u265B'
-const BLACK_ROOK = '\u265C'
-const BLACK_BISHOP = '\u265D'
-const BLACK_KNIGHT = '\u265E'
-const BLACK_PAWN = '\u265F'
-const pieceLookup = {
-    K: WHITE_KING,
-    Q: WHITE_QUEEN,
-    R: WHITE_ROOK,
-    B: WHITE_BISHOP,
-    N: WHITE_KNIGHT,
-    P: WHITE_PAWN,
-    k: BLACK_KING,
-    q: BLACK_QUEEN,
-    r: BLACK_ROOK,
-    b: BLACK_BISHOP,
-    n: BLACK_KNIGHT,
-    p: BLACK_PAWN
-}
-
 const Square = ({ onClick, piece, highlighted, colorClass }) => {
     const highlightClass = highlighted ? 'square-highlighted' : ''
     return (
@@ -72,7 +45,7 @@ const DumbBoard = ({ position, highlightList, handleClick }) => {
 
         for (let colInd = startInd; colInd !== endInd; colInd += indStep) {
             rowElement.push(
-                renderSquare(pieceLookup[row[colInd]], {
+                renderSquare(chessUtils.pieceLookup[row[colInd]], {
                     row: rowInd,
                     col: colInd
                 })
