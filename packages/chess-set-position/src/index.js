@@ -5,14 +5,33 @@ import { DumbBoard } from 'components'
 import * as chessApi from 'components'
 import * as chessUtils from 'components'
 
-const SetupPanel = ({ changePiece, changePosition, changeTurn, turn }) => {
+const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, turn, castle }) => {
 
+    
     const onChangePiece = (event) => {
         changePiece(event.target.value)
     }
 
     const onChangeTurn = (event) => {
         changeTurn(event.target.value)
+    }
+
+    const onChangeCastle = (event) => {
+        // const castle = 
+        //     (document.getElementById('WKCastle').checked ? 'K' : '') +  
+        //     (document.getElementById('WQCastle').checked ? 'Q' : '') +  
+        //     (document.getElementById('BKCastle').checked ? 'k' : '') +  
+        //     (document.getElementById('BQCastle').checked ? 'q' : '')
+        // Or, based on https://www.javascripttutorial.net/javascript-dom/javascript-checkbox/
+        const checkboxes = document.querySelectorAll(`input[name='castle']:checked`);
+        let castle = '';
+        checkboxes.forEach((checkbox) => {
+            castle += checkbox.value;
+        });
+        if (!castle) {
+            castle = '-'
+        }
+        changeCastle(castle)
     }
 
     return (
@@ -43,29 +62,28 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, turn }) => {
                 </div>
             </div>
             <hr/>
-            <div onChange={onChangeTurn}>
+            <div>
                 Turn: 
-                <input type='radio' value='W' name='turn' defaultChecked={true}/> W
-                <input type='radio' value='B' name='turn' /> B
+                <input type='radio' id='WTurn' value='W' name='turn' checked={turn === 'W'} onChange={onChangeTurn}/> W
+                <input type='radio' id='BTurn' value='B' name='turn' checked={turn === 'B'} onChange={onChangeTurn}/> B
             </div>
-            <div onChange={onChangeTurn}>
+            <div>
                 W: 
-                <input type='checkbox' value='K' name='turn'/> O-O
-                <input type='checkbox' value='Q' name='turn' /> O-O-O
+                <input type='checkbox' name='castle' value='K' checked={castle.includes('K')} id='WKCastle' onChange={onChangeCastle}/> O-O
+                <input type='checkbox' name='castle' value='Q' checked={castle.includes('Q')} id='WQCastle' onChange={onChangeCastle}/> O-O-O
                 <br/>
                 B: 
-                <input type='checkbox' value='k' name='turn'/> O-O
-                <input type='checkbox' value='q' name='turn' /> O-O-O
+                <input type='checkbox' name='castle' value='k' checked={castle.includes('k')} id='BKCastle' onChange={onChangeCastle}/> O-O
+                <input type='checkbox' name='castle' value='q' checked={castle.includes('q')} id='BQCastle' onChange={onChangeCastle}/> O-O-O
             </div>
         </div>
     )
 }
 
-const FenPanel = ({ position, turn }) => {
-    console.log(chessApi.setup2Fen({ position: position }))
+const FenPanel = ({ position, turn, castle }) => {
     return (
         <div style={{'border':'solid'}}>
-            {chessApi.setup2Fen({ position: position })}
+            {chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMove: '0', fullMove: '0'})}
         </div>
     )
 }
@@ -73,11 +91,16 @@ const FenPanel = ({ position, turn }) => {
 const PositionSetup = () => {
     const initGameState = chessApi.init()
     const initPosition = initGameState.position
+    const initCastle = 'KQkq'
     const emptyGameState = chessApi.empty()
     const emptyPosition = emptyGameState.position
-    const [position, setPosition] = useState(emptyPosition)
+    const emptyCastle = '-'
+
     const [piece, setPiece] = useState('K')
-    const [turn, setTurn] = useState('W')
+
+    const [position, setPosition] = useState(emptyPosition)
+    const [turn, setTurn] = useState('B')
+    const [castle, setCastle] = useState(emptyCastle)
 
     // const highlightList = []
 
@@ -94,14 +117,20 @@ const PositionSetup = () => {
     const changePosition = str => {
         console.log(str)
         if (str === 'init') {
-            setPosition(initPosition)            
+            setPosition(initPosition)
+            setCastle(initCastle)
         } else {
             setPosition(chessApi.emptyPosition)            
+            setCastle(emptyCastle)
         }
     }
 
     const changeTurn = newTurn => {
         setTurn(newTurn)
+    }
+
+    const changeCastle = value => {
+        setCastle(value)
     }
 
     return (
@@ -115,10 +144,13 @@ const PositionSetup = () => {
                 changePosition={changePosition}
                 changePiece={changePiece}
                 changeTurn={changeTurn}
+                changeCastle={changeCastle}
                 turn={turn}
+                castle={castle}
             />
             <FenPanel
                 position={position}
+                castle={castle}
                 turn={turn}
             />
         </div>

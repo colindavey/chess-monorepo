@@ -23,7 +23,14 @@ const chessApiState = game => {
     }
 }
 
-export const setup2Fen = ({ position }) => {
+export const setup2Fen = ({
+    position,
+    turn,
+    castle,
+    enPassantSquare,
+    halfMove,
+    fullMove
+}) => {
     const game = new Chess()
     game.clear()
     for (let rank = 0; rank < 8; rank++) {
@@ -41,8 +48,10 @@ export const setup2Fen = ({ position }) => {
             }
         }
     }
-    const tmpFen = game.fen()
-    const fen = tmpFen
+    const fenTmp = game.fen()
+    const fenPos = fenTmp.split(' ')[0]
+    // const fen = `${fenTmp} ++++ ${fenPos} ${turn.toLowerCase()} ${castle} ${enPassantSquare} ${halfMove} ${fullMove}`
+    const fen = `${fenPos} ${turn.toLowerCase()} ${castle} ${enPassantSquare} ${halfMove} ${fullMove}`
     return fen
 }
 
