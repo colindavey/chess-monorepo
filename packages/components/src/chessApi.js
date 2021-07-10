@@ -37,9 +37,7 @@ export const setup2Fen = ({
         for (let file = 0; file < 8; file++) {
             const piece = position[rank][file]
             if (piece) {
-                console.log('piece', piece)
                 const color = chessUtils.piece2Color(piece).toLowerCase()
-                console.log('color', color)
                 const square = chessUtils.boardCoord2uci({
                     col: file,
                     row: rank

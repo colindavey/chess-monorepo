@@ -5,7 +5,7 @@ import { DumbBoard } from 'components'
 import * as chessApi from 'components'
 import * as chessUtils from 'components'
 
-const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, turn, castle }) => {
+const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, turn, castle, fen }) => {
 
     
     const onChangePiece = (event) => {
@@ -76,16 +76,16 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
                 <input type='checkbox' name='castle' value='k' checked={castle.includes('k')} id='BKCastle' onChange={onChangeCastle}/> O-O
                 <input type='checkbox' name='castle' value='q' checked={castle.includes('q')} id='BQCastle' onChange={onChangeCastle}/> O-O-O
             </div>
+            <hr/>
+            <div>
+                {fen}
+            </div>
         </div>
     )
 }
 
-const FenPanel = ({ position, turn, castle }) => {
-    return (
-        <div style={{'border':'solid'}}>
-            {chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMove: '0', fullMove: '0'})}
-        </div>
-    )
+const makeFen = (position, turn, castle) => {
+    return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMove: '0', fullMove: '0' })
 }
 
 const PositionSetup = () => {
@@ -99,38 +99,47 @@ const PositionSetup = () => {
     const [piece, setPiece] = useState('K')
 
     const [position, setPosition] = useState(emptyPosition)
-    const [turn, setTurn] = useState('B')
+    const [turn, setTurn] = useState('W')
     const [castle, setCastle] = useState(emptyCastle)
 
-    // const highlightList = []
+    const [fen, setFen] = useState(makeFen(position, turn, castle))
 
-    const handleClick = boardCoord => {
-        position[boardCoord.row][boardCoord.col] = piece
-        setPosition([...position])
-    }
+    // const highlightList = []
 
     const changePiece = piece => {
         const newPiece = piece === 'X' ? '' : piece
         setPiece(newPiece)
     }
 
+    const handleClick = boardCoord => {
+        position[boardCoord.row][boardCoord.col] = piece
+        setPosition([...position])
+        setFen(makeFen(position, turn, castle))
+    }
+
     const changePosition = str => {
-        console.log(str)
+        const defaultTurn = 'W'
+        setTurn(defaultTurn)
         if (str === 'init') {
             setPosition(initPosition)
             setCastle(initCastle)
+            setFen(makeFen(initPosition, defaultTurn, initCastle))
         } else {
             setPosition(chessApi.emptyPosition)            
             setCastle(emptyCastle)
+            setFen(makeFen(chessApi.emptyPosition, defaultTurn, emptyCastle))
         }
+        // setFen(makeFen(position, turn, castle))
     }
 
     const changeTurn = newTurn => {
         setTurn(newTurn)
+        setFen(makeFen(position, turn, castle))
     }
 
     const changeCastle = value => {
         setCastle(value)
+        setFen(makeFen(position, turn, castle))
     }
 
     return (
@@ -141,17 +150,13 @@ const PositionSetup = () => {
                 handleClick={handleClick}
             />
             <SetupPanel
-                changePosition={changePosition}
                 changePiece={changePiece}
+                changePosition={changePosition}
                 changeTurn={changeTurn}
                 changeCastle={changeCastle}
                 turn={turn}
                 castle={castle}
-            />
-            <FenPanel
-                position={position}
-                castle={castle}
-                turn={turn}
+                fen={fen}
             />
         </div>
     )
