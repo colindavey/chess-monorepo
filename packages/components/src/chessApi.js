@@ -1,4 +1,5 @@
 import Chess from 'chess.js'
+import * as chessUtils from './chessUtils.js'
 
 export const emptyPosition = [
     ['', '', '', '', '', '', '', ''],
@@ -20,6 +21,29 @@ const chessApiState = game => {
         legalMoves: mappedMoves,
         position: board2Position(game.board())
     }
+}
+
+export const setup2Fen = ({ position }) => {
+    const game = new Chess()
+    game.clear()
+    for (let rank = 0; rank < 8; rank++) {
+        for (let file = 0; file < 8; file++) {
+            const piece = position[rank][file]
+            if (piece) {
+                console.log('piece', piece)
+                const color = chessUtils.piece2Color(piece).toLowerCase()
+                console.log('color', color)
+                const square = chessUtils.boardCoord2uci({
+                    col: file,
+                    row: rank
+                })
+                game.put({ type: piece, color: color }, square)
+            }
+        }
+    }
+    const tmpFen = game.fen()
+    const fen = tmpFen
+    return fen
 }
 
 export const board2Position = board => {

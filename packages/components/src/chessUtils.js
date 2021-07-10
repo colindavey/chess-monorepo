@@ -32,6 +32,7 @@ export function boardCoord2key(nDims, boardCoord) {
 }
 
 export function piece2Color(piece) {
+    console.log('p2c', piece)
     if (!piece) {
         return null
     }

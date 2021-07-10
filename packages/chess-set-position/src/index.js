@@ -62,10 +62,10 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, turn }) => {
 }
 
 const FenPanel = ({ position, turn }) => {
+    console.log(chessApi.setup2Fen({ position: position }))
     return (
         <div style={{'border':'solid'}}>
-            {position}
-            {turn}
+            {chessApi.setup2Fen({ position: position })}
         </div>
     )
 }
