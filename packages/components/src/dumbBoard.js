@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import * as chessUtils from './chessUtils.js'
-const DIMS = 8
+export const DIMS = 8
 
 const Square = ({ onClick, piece, highlighted, colorClass }) => {
     const highlightClass = highlighted ? 'square-highlighted' : ''

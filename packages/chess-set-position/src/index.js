@@ -35,7 +35,7 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
     }
     // style={{'border':'solid'}}
     return (
-        <div className='game-info'>
+        <div className='game-info' style={{width: '250px'}}>
             <div>
                <button onClick={() => changePosition('init')}>Init</button>
                <button onClick={() => changePosition('empty')}>Empty</button>
@@ -82,11 +82,14 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
             </div>
             <hr/>
             <div>
-                {analysis}
+                {analysis.map((item, index) => <div key={index}>{item}</div>)}
             </div>
         </div>
     )
 }
+// <div style={{width: '80px', whiteSpace: 'nowrap'}}>
+// <div style={{width: '80px'}}>
+// <div>
 
 const makeFen = (position, turn, castle) => {
     return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMoveClock: '0', fullMoveNumber: '1' })
@@ -107,16 +110,17 @@ const PositionSetup = () => {
     const [castle, setCastle] = useState(emptyCastle)
 
     const [fen, setFen] = useState(makeFen(position, turn, castle))
-    const [analysis, setAnalysis] = useState(chessApi.analyzeFen(fen))
-
+    const illegalCheck = chessUtils.checkLegalPos(position)
+    const [analysis, setAnalysis] = useState(illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen))
+    
     // const highlightList = []
 
     const calculateBits = (position, turn, castle) => {
         const fen = makeFen(position, turn, castle)
         setFen(fen)
-        const analysis = chessApi.analyzeFen(fen)
-        console.log(analysis)
-        console.log(fen)
+        const illegalCheck = chessUtils.checkLegalPos(position)
+        // TODO: following line duplicates the analysis state code above
+        const analysis = illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
         setAnalysis(analysis)
     }
 

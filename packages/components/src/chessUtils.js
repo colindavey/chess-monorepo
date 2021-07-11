@@ -1,3 +1,5 @@
+export const DIMS = 8
+
 const WHITE_KING = '\u2654'
 const WHITE_QUEEN = '\u2655'
 const WHITE_ROOK = '\u2656'
@@ -62,4 +64,81 @@ export function getLegalDestsFrom(boardCoord, legalMoves) {
     // e.g. maps ["e2e3", "e2e4"] to ["e3", "e4"]
     const legalDests = legalMovesFiltered.map(m => m.slice(2))
     return legalDests
+}
+
+export function checkLegalPos(position) {
+    const positionStats = {
+        K: { locations: [], count: 0 },
+        Q: { locations: [], count: 0 },
+        R: { locations: [], count: 0 },
+        B: { locations: [], count: 0 },
+        N: { locations: [], count: 0 },
+        P: { locations: [], count: 0 },
+        k: { locations: [], count: 0 },
+        q: { locations: [], count: 0 },
+        r: { locations: [], count: 0 },
+        b: { locations: [], count: 0 },
+        n: { locations: [], count: 0 },
+        p: { locations: [], count: 0 }
+    }
+    for (let row = 0; row < DIMS; row++) {
+        for (let col = 0; col < DIMS; col++) {
+            const piece = position[row][col]
+            if (piece) {
+                positionStats[piece].count++
+                positionStats[piece].locations.push({ row: row, col: col })
+            }
+        }
+    }
+    const msg = []
+    const whiteKCount = positionStats.K.count
+    if (whiteKCount === 0) {
+        msg.push('No White King. ')
+    }
+    if (whiteKCount > 1) {
+        msg.push(`${positionStats.K.count} White Kings (must be 1). `)
+    }
+
+    const blackKCount = positionStats.k.count
+    if (blackKCount === 0) {
+        msg.push('No Black King. ')
+    }
+    if (blackKCount > 1) {
+        msg.push(`${positionStats.K.count} Black Kings (must be 1). `)
+    }
+
+    if (blackKCount === 1 && whiteKCount === 1) {
+        if (
+            /* eslint-disable */
+            Math.abs(positionStats.K.locations[0].row - positionStats.k.locations[0].row) <= 1
+            &&
+            Math.abs(positionStats.K.locations[0].col - positionStats.k.locations[0].col) <= 1
+            /* eslint-enable */
+        ) {
+            msg.push('Kings are next to each other. ')
+        }
+    }
+
+    if (positionStats.P.count > 8) {
+        msg.push(`${positionStats.P.count} White Pawns (must be 8 or fewer). `)
+    }
+    if (positionStats.p.count > 8) {
+        msg.push(`${positionStats.P.count} Black Pawns (must be 8 or fewer). `)
+    }
+    if (position[0].includes('P')) {
+        msg.push('White Pawn on back rank. ')
+    }
+    if (position[7].includes('P')) {
+        msg.push('White Pawn on eigth rank. ')
+    }
+    if (position[7].includes('p')) {
+        msg.push('Black Pawn on back rank. ')
+    }
+    if (position[0].includes('p')) {
+        msg.push('Black Pawn on eigth rank. ')
+    }
+    if (msg.length) {
+        msg.unshift('Illegal position: ')
+    }
+    return msg
 }
