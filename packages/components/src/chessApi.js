@@ -1,16 +1,37 @@
 import Chess from 'chess.js'
 import * as chessUtils from './chessUtils.js'
 
-export const emptyPosition = [
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '']
-]
+// export const emptyPosition = [
+//     ['', '', '', '', '', '', '', ''],
+//     ['', '', '', '', '', '', '', ''],
+//     ['', '', '', '', '', '', '', ''],
+//     ['', '', '', '', '', '', '', ''],
+//     ['', '', '', '', '', '', '', ''],
+//     ['', '', '', '', '', '', '', ''],
+//     ['', '', '', '', '', '', '', ''],
+//     ['', '', '', '', '', '', '', '']
+// ]
+
+export const calcGame = moves => {
+    const game = new Chess()
+    moves.forEach(element => {
+        game.move(element)
+    })
+    return game
+}
+
+export const board2Position = board => {
+    /* eslint-disable */
+    return board.map(
+        row => row.map(
+            el =>
+            el
+                ? el.color === 'b' ? el.type : el.type.toUpperCase()
+                : ''
+        )
+    ).reverse()
+    /* eslint-enable */
+}
 
 const chessApiState = game => {
     const legalMoves = game.moves({ verbose: true })
@@ -23,6 +44,22 @@ const chessApiState = game => {
     }
 }
 
+export const initGame = () => {
+    const game = calcGame([])
+    return chessApiState(game)
+}
+
+export const emptyGame = () => {
+    const game = new Chess()
+    game.clear()
+    return chessApiState(game)
+}
+
+const initGameState = initGame()
+export const initPosition = initGameState.position
+const emptyGameState = emptyGame()
+export const emptyPosition = emptyGameState.position
+
 export const analyzeFen = fen => {
     const game = new Chess(fen)
     return analyzeGame(game)
@@ -32,7 +69,7 @@ export const analyzeGame = game => {
     const msg = []
     const turn = game.turn() === 'w' ? 'White' : 'Black'
     if (game.game_over()) {
-        msg.push('Game over. ')
+        msg.push('Game over.')
         if (game.in_checkmate()) {
             msg.push(`${turn} is checkmated.`)
         } else if (game.in_draw()) {
@@ -45,7 +82,7 @@ export const analyzeGame = game => {
             }
         }
     } else {
-        msg.push(`${turn}'s turn. `)
+        msg.push(`${turn}'s turn.`)
         if (game.in_check()) {
             msg.push(`${turn} is in check.`)
         }
@@ -83,36 +120,9 @@ export const setup2Fen = ({
     return fen
 }
 
-export const board2Position = board => {
-    /* eslint-disable */
-    return board.map(
-        row => row.map(
-            el =>
-            el
-                ? el.color === 'b' ? el.type : el.type.toUpperCase()
-                : ''
-        )
-    ).reverse()
-    /* eslint-enable */
-}
-
-export const calcGame = moves => {
-    const game = new Chess()
-    moves.forEach(element => {
-        game.move(element)
-    })
-    return game
-}
-
-export const empty = () => {
-    const game = new Chess()
-    game.clear()
-    return chessApiState(game)
-}
-
-export const init = () => {
-    const game = calcGame([])
-    return chessApiState(game)
+export const inCheck = fen => {
+    const game = new Chess(fen)
+    return game.in_check()
 }
 
 export const moveTo = moves => {

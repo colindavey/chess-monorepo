@@ -93,18 +93,18 @@ export function checkLegalPos(position) {
     const msg = []
     const whiteKCount = positionStats.K.count
     if (whiteKCount === 0) {
-        msg.push('No White King. ')
+        msg.push('No White King.')
     }
     if (whiteKCount > 1) {
-        msg.push(`${positionStats.K.count} White Kings (must be 1). `)
+        msg.push(`${positionStats.K.count} White Kings (must be 1).`)
     }
 
     const blackKCount = positionStats.k.count
     if (blackKCount === 0) {
-        msg.push('No Black King. ')
+        msg.push('No Black King.')
     }
     if (blackKCount > 1) {
-        msg.push(`${positionStats.K.count} Black Kings (must be 1). `)
+        msg.push(`${positionStats.K.count} Black Kings (must be 1).`)
     }
 
     if (blackKCount === 1 && whiteKCount === 1) {
@@ -115,30 +115,27 @@ export function checkLegalPos(position) {
             Math.abs(positionStats.K.locations[0].col - positionStats.k.locations[0].col) <= 1
             /* eslint-enable */
         ) {
-            msg.push('Kings are next to each other. ')
+            msg.push('Kings are next to each other.')
         }
     }
 
     if (positionStats.P.count > 8) {
-        msg.push(`${positionStats.P.count} White Pawns (must be 8 or fewer). `)
+        msg.push(`${positionStats.P.count} White Pawns (must be 8 or fewer).`)
     }
     if (positionStats.p.count > 8) {
-        msg.push(`${positionStats.P.count} Black Pawns (must be 8 or fewer). `)
+        msg.push(`${positionStats.P.count} Black Pawns (must be 8 or fewer).`)
     }
     if (position[0].includes('P')) {
-        msg.push('White Pawn on back rank. ')
+        msg.push('White Pawn on back rank.')
     }
     if (position[7].includes('P')) {
-        msg.push('White Pawn on eigth rank. ')
+        msg.push('White Pawn on eigth rank.')
     }
     if (position[7].includes('p')) {
-        msg.push('Black Pawn on back rank. ')
+        msg.push('Black Pawn on back rank.')
     }
     if (position[0].includes('p')) {
-        msg.push('Black Pawn on eigth rank. ')
-    }
-    if (msg.length) {
-        msg.unshift('Illegal position: ')
+        msg.push('Black Pawn on eigth rank.')
     }
     return msg
 }

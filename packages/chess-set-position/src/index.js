@@ -5,9 +5,8 @@ import { DumbBoard } from 'components'
 import * as chessApi from 'components'
 import * as chessUtils from 'components'
 
-const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, turn, castle, fen, analysis}) => {
+const SetupPanel = ({ turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen, analysis, changePiece, changePosition, changeTurn, changeCastle }) => {
 
-    
     const onChangePiece = (event) => {
         changePiece(event.target.value)
     }
@@ -66,20 +65,29 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
             </div>
             <hr/>
             <div>
-                Turn: 
+                Turn:
                 <input type='radio' id='WTurn' value='W' name='turn' checked={turn === 'W'} onChange={onChangeTurn}/> W
                 <input type='radio' id='BTurn' value='B' name='turn' checked={turn === 'B'} onChange={onChangeTurn}/> B
-            </div>
-            <div>
-                W: 
+                <br/>
+                Castle availability:<br/>
+                W:
                 <input type='checkbox' name='castle' value='K' checked={castle.includes('K')} id='WKCastle' onChange={onChangeCastle}/> O-O
                 <input type='checkbox' name='castle' value='Q' checked={castle.includes('Q')} id='WQCastle' onChange={onChangeCastle}/> O-O-O
                 <br/>
-                B: 
+                B:
                 <input type='checkbox' name='castle' value='k' checked={castle.includes('k')} id='BKCastle' onChange={onChangeCastle}/> O-O
                 <input type='checkbox' name='castle' value='q' checked={castle.includes('q')} id='BQCastle' onChange={onChangeCastle}/> O-O-O
+                <br/>
+                Halfmove clock: 
+                {halfMoveClock}
+                <br/>
+                Fullmove number: 
+                {fullMoveNumber}
+                <br/>
+                En passant square: 
+                {enPassantSquare}
             </div>
-            <hr/>
+           <hr/>
             <div>
                 {fen}
             </div>
@@ -94,38 +102,54 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
 // <div style={{width: '80px'}}>
 // <div>
 
-const makeFen = (position, turn, castle) => {
-    return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMoveClock: '0', fullMoveNumber: '1' })
+const makeFen = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber) => {
+    return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: enPassantSquare, halfMoveClock: halfMoveClock, fullMoveNumber: fullMoveNumber })
 }
 
-const makeAnalysis = (position, fen) => {
+const makeAnalysis = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen) => {
     const illegalCheck = chessUtils.checkLegalPos(position)
+    // Tests that require chessAPI
+    const tmpFen = makeFen(position, turn === 'B' ? 'W' : 'B', castle, enPassantSquare, halfMoveClock, fullMoveNumber)
+    if (chessApi.inCheck(tmpFen)) {
+        illegalCheck.push(`${turn === 'B' ? 'White' : 'Black'} is in check, but doesn't have turn.`)
+    }
+    if (JSON.stringify(chessApi.initPosition) === JSON.stringify(position)) {
+        if (turn === 'B') {
+            illegalCheck.push("Game is in initial position, but it's black's turn.")
+        } else if (castle !== 'KQkq' && fullMoveNumber === '1') {
+            illegalCheck.push("Game is in initial position, but not all castles are available.")
+        }
+    }
+    if (illegalCheck.length) {
+        illegalCheck.unshift('Illegal position: ')
+    }
     return illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
 }
 
 const PositionSetup = () => {
-    const initGameState = chessApi.init()
-    const initPosition = initGameState.position
     const initCastle = 'KQkq'
-    const emptyGameState = chessApi.empty()
-    const emptyPosition = emptyGameState.position
     const emptyCastle = '-'
 
     const [piece, setPiece] = useState('K')
 
-    const [position, setPosition] = useState(emptyPosition)
+    const [position, setPosition] = useState(chessApi.emptyPosition)
     const [turn, setTurn] = useState('W')
     const [castle, setCastle] = useState(emptyCastle)
 
-    const [fen, setFen] = useState(makeFen(position, turn, castle))
-    const [analysis, setAnalysis] = useState(makeAnalysis(position, fen))
+    const [enPassantSquare, setEnPassantSquare] = useState('-')
+    const [halfMoveClock, setHalfMoveClock] = useState('0')
+    const [fullMoveNumber, setFullMoveNumber] = useState('1')
+    // enPassantSquare: '-', halfMoveClock: '0', fullMoveNumber: '1'
+
+    const [fen, setFen] = useState(makeFen(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber))
+    const [analysis, setAnalysis] = useState(makeAnalysis(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen))
     
     // const highlightList = []
 
-    const calculateBits = (position, turn, castle) => {
-        const fen = makeFen(position, turn, castle)
+    const calculateBits = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber) => {
+        const fen = makeFen(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
         setFen(fen)
-        setAnalysis(makeAnalysis(position, fen))
+        setAnalysis(makeAnalysis(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen))
     }
 
     const changePiece = piece => {
@@ -136,33 +160,33 @@ const PositionSetup = () => {
     const handleClick = boardCoord => {
         position[boardCoord.row][boardCoord.col] = piece
         setPosition([...position])
-        calculateBits(position, turn, castle)
+        calculateBits(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
     }
 
     const changePosition = str => {
         const defaultTurn = 'W'
         setTurn(defaultTurn)
         if (str === 'init') {
-            setPosition(initPosition)
+            setPosition(chessApi.initPosition)
             setCastle(initCastle)
-            setFen(makeFen(initPosition, defaultTurn, initCastle))
-            calculateBits(initPosition, defaultTurn, initCastle)
+            setFen(makeFen(chessApi.initPosition, defaultTurn, initCastle, enPassantSquare, halfMoveClock, fullMoveNumber))
+            calculateBits(chessApi.initPosition, defaultTurn, initCastle, enPassantSquare, halfMoveClock, fullMoveNumber)
         } else {
             setPosition(chessApi.emptyPosition)            
             setCastle(emptyCastle)
-            setFen(makeFen(chessApi.emptyPosition, defaultTurn, emptyCastle))
-            calculateBits(chessApi.emptyPosition, defaultTurn, emptyCastle)
+            setFen(makeFen(chessApi.emptyPosition, defaultTurn, emptyCastle, enPassantSquare, halfMoveClock, fullMoveNumber))
+            calculateBits(chessApi.emptyPosition, defaultTurn, emptyCastle, enPassantSquare, halfMoveClock, fullMoveNumber)
         }
     }
 
     const changeTurn = newTurn => {
         setTurn(newTurn)
-        calculateBits(position, newTurn, castle)
+        calculateBits(position, newTurn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
     }
 
     const changeCastle = castle => {
         setCastle(castle)
-        calculateBits(position, turn, castle)
+        calculateBits(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
     }
 
     return (
@@ -173,14 +197,17 @@ const PositionSetup = () => {
                 handleClick={handleClick}
             />
             <SetupPanel
+                turn={turn}
+                castle={castle}
+                enPassantSquare={enPassantSquare}
+                halfMoveClock={halfMoveClock}
+                fullMoveNumber={fullMoveNumber}
+                fen={fen}
+                analysis={analysis}
                 changePiece={changePiece}
                 changePosition={changePosition}
                 changeTurn={changeTurn}
                 changeCastle={changeCastle}
-                turn={turn}
-                castle={castle}
-                fen={fen}
-                analysis={analysis}
             />
         </div>
     )
