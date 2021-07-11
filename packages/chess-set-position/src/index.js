@@ -17,8 +17,7 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
     }
 
     const onChangeCastle = (event) => {
-        console.log('onChangeCastle', document.getElementById('WKCastle').checked)
-        const castle = 
+        let castle = 
             (document.getElementById('WKCastle').checked ? 'K' : '') +  
             (document.getElementById('WQCastle').checked ? 'Q' : '') +  
             (document.getElementById('BKCastle').checked ? 'k' : '') +  
@@ -29,13 +28,15 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
         // checkboxes.forEach((checkbox) => {
         //     castle += checkbox.value;
         // });
-        // if (!castle) {
-        //     castle = '-'
-        // }
-        console.log('castle', castle)
+
+        if (!castle) {
+            castle = '-'
+        }
         changeCastle(castle)
     }
+    
     // style={{'border':'solid'}}
+
     return (
         <div className='game-info' style={{width: '250px'}}>
             <div>
