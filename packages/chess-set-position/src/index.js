@@ -17,20 +17,22 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
     }
 
     const onChangeCastle = (event) => {
-        // const castle = 
-        //     (document.getElementById('WKCastle').checked ? 'K' : '') +  
-        //     (document.getElementById('WQCastle').checked ? 'Q' : '') +  
-        //     (document.getElementById('BKCastle').checked ? 'k' : '') +  
-        //     (document.getElementById('BQCastle').checked ? 'q' : '')
+        console.log('onChangeCastle', document.getElementById('WKCastle').checked)
+        const castle = 
+            (document.getElementById('WKCastle').checked ? 'K' : '') +  
+            (document.getElementById('WQCastle').checked ? 'Q' : '') +  
+            (document.getElementById('BKCastle').checked ? 'k' : '') +  
+            (document.getElementById('BQCastle').checked ? 'q' : '')
         // Or, based on https://www.javascripttutorial.net/javascript-dom/javascript-checkbox/
-        const checkboxes = document.querySelectorAll(`input[name='castle']:checked`);
-        let castle = '';
-        checkboxes.forEach((checkbox) => {
-            castle += checkbox.value;
-        });
-        if (!castle) {
-            castle = '-'
-        }
+        // const checkboxes = document.querySelectorAll(`input[name='castle']:checked`);
+        // let castle = '';
+        // checkboxes.forEach((checkbox) => {
+        //     castle += checkbox.value;
+        // });
+        // if (!castle) {
+        //     castle = '-'
+        // }
+        console.log('castle', castle)
         changeCastle(castle)
     }
     // style={{'border':'solid'}}
@@ -158,8 +160,8 @@ const PositionSetup = () => {
         calculateBits(position, newTurn, castle)
     }
 
-    const changeCastle = value => {
-        setCastle(value)
+    const changeCastle = castle => {
+        setCastle(castle)
         // setFen(makeFen(position, turn, castle))
         calculateBits(position, turn, castle)
     }
