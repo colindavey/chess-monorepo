@@ -5,7 +5,7 @@ import { DumbBoard } from 'components'
 import * as chessApi from 'components'
 import * as chessUtils from 'components'
 
-const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, turn, castle, fen }) => {
+const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, turn, castle, fen, analysis}) => {
 
     
     const onChangePiece = (event) => {
@@ -33,9 +33,9 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
         }
         changeCastle(castle)
     }
-
+    // style={{'border':'solid'}}
     return (
-        <div className='game-info' style={{'border':'solid'}}>
+        <div className='game-info'>
             <div>
                <button onClick={() => changePosition('init')}>Init</button>
                <button onClick={() => changePosition('empty')}>Empty</button>
@@ -80,12 +80,16 @@ const SetupPanel = ({ changePiece, changePosition, changeTurn, changeCastle, tur
             <div>
                 {fen}
             </div>
+            <hr/>
+            <div>
+                {analysis}
+            </div>
         </div>
     )
 }
 
 const makeFen = (position, turn, castle) => {
-    return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMove: '0', fullMove: '0' })
+    return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMoveClock: '0', fullMoveNumber: '1' })
 }
 
 const PositionSetup = () => {
@@ -103,8 +107,18 @@ const PositionSetup = () => {
     const [castle, setCastle] = useState(emptyCastle)
 
     const [fen, setFen] = useState(makeFen(position, turn, castle))
+    const [analysis, setAnalysis] = useState(chessApi.analyzeFen(fen))
 
     // const highlightList = []
+
+    const calculateBits = (position, turn, castle) => {
+        const fen = makeFen(position, turn, castle)
+        setFen(fen)
+        const analysis = chessApi.analyzeFen(fen)
+        console.log(analysis)
+        console.log(fen)
+        setAnalysis(analysis)
+    }
 
     const changePiece = piece => {
         const newPiece = piece === 'X' ? '' : piece
@@ -114,7 +128,8 @@ const PositionSetup = () => {
     const handleClick = boardCoord => {
         position[boardCoord.row][boardCoord.col] = piece
         setPosition([...position])
-        setFen(makeFen(position, turn, castle))
+        // setFen(makeFen(position, turn, castle))
+        calculateBits(position, turn, castle)
     }
 
     const changePosition = str => {
@@ -124,22 +139,25 @@ const PositionSetup = () => {
             setPosition(initPosition)
             setCastle(initCastle)
             setFen(makeFen(initPosition, defaultTurn, initCastle))
+            calculateBits(initPosition, defaultTurn, initCastle)
         } else {
             setPosition(chessApi.emptyPosition)            
             setCastle(emptyCastle)
             setFen(makeFen(chessApi.emptyPosition, defaultTurn, emptyCastle))
+            calculateBits(chessApi.emptyPosition, defaultTurn, emptyCastle)
         }
-        // setFen(makeFen(position, turn, castle))
     }
 
     const changeTurn = newTurn => {
         setTurn(newTurn)
-        setFen(makeFen(position, turn, castle))
+        // setFen(makeFen(position, turn, castle))
+        calculateBits(position, newTurn, castle)
     }
 
     const changeCastle = value => {
         setCastle(value)
-        setFen(makeFen(position, turn, castle))
+        // setFen(makeFen(position, turn, castle))
+        calculateBits(position, turn, castle)
     }
 
     return (
@@ -157,6 +175,7 @@ const PositionSetup = () => {
                 turn={turn}
                 castle={castle}
                 fen={fen}
+                analysis={analysis}
             />
         </div>
     )

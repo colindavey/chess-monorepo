@@ -23,13 +23,43 @@ const chessApiState = game => {
     }
 }
 
+export const analyzeFen = fen => {
+    const game = new Chess(fen)
+    return analyzeGame(game)
+}
+
+export const analyzeGame = game => {
+    const msg = []
+    const turn = game.turn() === 'w' ? 'White' : 'Black'
+    if (game.game_over()) {
+        msg.push('Game over. ')
+        if (game.in_checkmate()) {
+            msg.push(`${turn} is checkmated.`)
+        } else if (game.in_draw()) {
+            if (game.in_stalemate()) {
+                msg.push('Draw by stalemate.')
+            } else if (game.in_threefold_repetition()) {
+                msg.push('Draw by threefold repetition.')
+            } else if (game.insufficient_material()) {
+                msg.push('Draw by insufficient material.')
+            }
+        }
+    } else {
+        msg.push(`${turn}'s turn. `)
+        if (game.in_check()) {
+            msg.push(`${turn} is in check.`)
+        }
+    }
+    return msg
+}
+
 export const setup2Fen = ({
     position,
     turn,
     castle,
     enPassantSquare,
-    halfMove,
-    fullMove
+    halfMoveClock,
+    fullMoveNumber
 }) => {
     const game = new Chess()
     game.clear()
@@ -49,7 +79,7 @@ export const setup2Fen = ({
     const fenTmp = game.fen()
     const fenPos = fenTmp.split(' ')[0]
     // const fen = `${fenTmp} ++++ ${fenPos} ${turn.toLowerCase()} ${castle} ${enPassantSquare} ${halfMove} ${fullMove}`
-    const fen = `${fenPos} ${turn.toLowerCase()} ${castle} ${enPassantSquare} ${halfMove} ${fullMove}`
+    const fen = `${fenPos} ${turn.toLowerCase()} ${castle} ${enPassantSquare} ${halfMoveClock} ${fullMoveNumber}`
     return fen
 }
 
