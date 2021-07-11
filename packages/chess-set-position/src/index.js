@@ -97,6 +97,11 @@ const makeFen = (position, turn, castle) => {
     return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: '-', halfMoveClock: '0', fullMoveNumber: '1' })
 }
 
+const makeAnalysis = (position, fen) => {
+    const illegalCheck = chessUtils.checkLegalPos(position)
+    return illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
+}
+
 const PositionSetup = () => {
     const initGameState = chessApi.init()
     const initPosition = initGameState.position
@@ -112,18 +117,14 @@ const PositionSetup = () => {
     const [castle, setCastle] = useState(emptyCastle)
 
     const [fen, setFen] = useState(makeFen(position, turn, castle))
-    const illegalCheck = chessUtils.checkLegalPos(position)
-    const [analysis, setAnalysis] = useState(illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen))
+    const [analysis, setAnalysis] = useState(makeAnalysis(position, fen))
     
     // const highlightList = []
 
     const calculateBits = (position, turn, castle) => {
         const fen = makeFen(position, turn, castle)
         setFen(fen)
-        const illegalCheck = chessUtils.checkLegalPos(position)
-        // TODO: following line duplicates the analysis state code above
-        const analysis = illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
-        setAnalysis(analysis)
+        setAnalysis(makeAnalysis(position, fen))
     }
 
     const changePiece = piece => {
@@ -134,7 +135,6 @@ const PositionSetup = () => {
     const handleClick = boardCoord => {
         position[boardCoord.row][boardCoord.col] = piece
         setPosition([...position])
-        // setFen(makeFen(position, turn, castle))
         calculateBits(position, turn, castle)
     }
 
@@ -156,13 +156,11 @@ const PositionSetup = () => {
 
     const changeTurn = newTurn => {
         setTurn(newTurn)
-        // setFen(makeFen(position, turn, castle))
         calculateBits(position, newTurn, castle)
     }
 
     const changeCastle = castle => {
         setCastle(castle)
-        // setFen(makeFen(position, turn, castle))
         calculateBits(position, turn, castle)
     }
 
