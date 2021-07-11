@@ -66,7 +66,7 @@ export function getLegalDestsFrom(boardCoord, legalMoves) {
     return legalDests
 }
 
-export function checkLegalPos(position) {
+export function checkLegalPos(position, castle) {
     const positionStats = {
         K: { locations: [], count: 0 },
         Q: { locations: [], count: 0 },
@@ -136,6 +136,58 @@ export function checkLegalPos(position) {
     }
     if (position[0].includes('p')) {
         msg.push('Black Pawn on eigth rank.')
+    }
+    // Check White castling
+    const wKingOnOrig = position[0][4] === 'K'
+    if (castle.includes('K')) {
+        if (!wKingOnOrig) {
+            msg.push(
+                'O-O available for White, but King not on original square.'
+            )
+        }
+        if (position[0][7] !== 'R') {
+            msg.push(
+                "O-O available for White, but King's Rook not on original square."
+            )
+        }
+    }
+    if (castle.includes('Q')) {
+        if (!wKingOnOrig) {
+            msg.push(
+                'O-O-O available for White, but King not on original square.'
+            )
+        }
+        if (position[0][0] !== 'R') {
+            msg.push(
+                "O-O-O available for White, but Queen's Rook not on original square."
+            )
+        }
+    }
+    // Check Black castling
+    const bKingOnOrig = position[7][4] === 'k'
+    if (castle.includes('k')) {
+        if (!bKingOnOrig) {
+            msg.push(
+                'O-O available for Black, but King not on original square.'
+            )
+        }
+        if (position[7][7] !== 'r') {
+            msg.push(
+                "O-O available for Black, but King's Rook not on original square."
+            )
+        }
+    }
+    if (castle.includes('q')) {
+        if (!bKingOnOrig) {
+            msg.push(
+                'O-O-O available for Black, but King not on original square.'
+            )
+        }
+        if (position[7][0] !== 'r') {
+            msg.push(
+                "O-O-O available for Black, but Queen's Rook not on original square."
+            )
+        }
     }
     return msg
 }

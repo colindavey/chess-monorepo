@@ -107,7 +107,7 @@ const makeFen = (position, turn, castle, enPassantSquare, halfMoveClock, fullMov
 }
 
 const makeAnalysis = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen) => {
-    const illegalCheck = chessUtils.checkLegalPos(position)
+    const illegalCheck = chessUtils.checkLegalPos(position, castle)
     // Tests that require chessAPI
     const tmpFen = makeFen(position, turn === 'B' ? 'W' : 'B', castle, enPassantSquare, halfMoveClock, fullMoveNumber)
     if (chessApi.inCheck(tmpFen)) {
