@@ -90,27 +90,27 @@ const SetupPanel = ({
             </div>
             <hr/>
             <div>
-                Turn:
+                Turn:&nbsp;&nbsp;
                 <input type='radio' id='WTurn' value='W' name='turn' checked={turn === 'W'} onChange={onChangeTurn}/> W
                 <input type='radio' id='BTurn' value='B' name='turn' checked={turn === 'B'} onChange={onChangeTurn}/> B
                 <br/>
                 Castle availability:<br/>
-                W:
+                W:&nbsp;&nbsp;
                 <input type='checkbox' name='castle' value='K' checked={castle.includes('K')} id='WKCastle' onChange={onChangeCastle}/> O-O
                 <input type='checkbox' name='castle' value='Q' checked={castle.includes('Q')} id='WQCastle' onChange={onChangeCastle}/> O-O-O
                 <br/>
-                B:
+                B:&nbsp;&nbsp;
                 <input type='checkbox' name='castle' value='k' checked={castle.includes('k')} id='BKCastle' onChange={onChangeCastle}/> O-O
                 <input type='checkbox' name='castle' value='q' checked={castle.includes('q')} id='BQCastle' onChange={onChangeCastle}/> O-O-O
                 <br/>
-                En passant square: 
+                En passant square:&nbsp;&nbsp;
                 {enPassantSquare}
                 <br/>
-                Halfmove clock: 
-                <input type="number" onChange={onChangeHalfMoveClock} min={0} max={300} value={halfMoveClock}></input>
+                Halfmove clock:&nbsp;&nbsp;
+                <input type="number" onChange={onChangeHalfMoveClock} min={0} max={100} value={halfMoveClock}></input>
                 <br/>
-                Fullmove number: 
-                <input type="number" onChange={onChangeFullMoveNumber} min={1} max={300} value={fullMoveNumber}></input>
+                Fullmove number:&nbsp;&nbsp;
+                <input type="number" onChange={onChangeFullMoveNumber} min={1} max={999} value={fullMoveNumber}></input>
             </div>
            <hr/>
             <div>

@@ -79,6 +79,8 @@ export const analyzeGame = game => {
                 msg.push('Draw by threefold repetition.')
             } else if (game.insufficient_material()) {
                 msg.push('Draw by insufficient material.')
+            } else {
+                msg.push('Draw by 50-move rule.')
             }
         }
     } else {
