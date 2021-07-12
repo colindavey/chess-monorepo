@@ -5,7 +5,22 @@ import { DumbBoard } from 'components'
 import * as chessApi from 'components'
 import * as chessUtils from 'components'
 
-const SetupPanel = ({ turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen, analysis, changePiece, changePosition, changeTurn, changeCastle }) => {
+const SetupPanel = ({
+    turn,
+    castle,
+    enPassantSquare,
+    halfMoveClock,
+    fullMoveNumber,
+    fen,
+    analysis,
+    changePiece,
+    changePosition,
+    changeTurn,
+    changeCastle,
+    changeEnPassantSquare,
+    changeHalfmoveClock,
+    changeFullmoveNumber
+}) => {
 
     const onChangePiece = (event) => {
         changePiece(event.target.value)
@@ -34,7 +49,17 @@ const SetupPanel = ({ turn, castle, enPassantSquare, halfMoveClock, fullMoveNumb
         changeCastle(castle)
     }
     
-    // style={{'border':'solid'}}
+    const onChangeHalfMoveClock = (event) => {
+        changeHalfmoveClock(event.target.value)
+    }
+
+    const onChangeFullMoveNumber = (event) => {
+        changeFullmoveNumber(event.target.value)
+    }
+
+    const onChangeEnPassantSquare = (event) => {
+        changeEnPassantSquare(event.target.value)
+    }
 
     return (
         <div className='game-info' style={{width: '250px'}}>
@@ -78,14 +103,14 @@ const SetupPanel = ({ turn, castle, enPassantSquare, halfMoveClock, fullMoveNumb
                 <input type='checkbox' name='castle' value='k' checked={castle.includes('k')} id='BKCastle' onChange={onChangeCastle}/> O-O
                 <input type='checkbox' name='castle' value='q' checked={castle.includes('q')} id='BQCastle' onChange={onChangeCastle}/> O-O-O
                 <br/>
-                Halfmove clock: 
-                {halfMoveClock}
-                <br/>
-                Fullmove number: 
-                {fullMoveNumber}
-                <br/>
                 En passant square: 
                 {enPassantSquare}
+                <br/>
+                Halfmove clock: 
+                <input type="number" onChange={onChangeHalfMoveClock} min={0} max={300} value={halfMoveClock}></input>
+                <br/>
+                Fullmove number: 
+                <input type="number" onChange={onChangeFullMoveNumber} min={1} max={300} value={fullMoveNumber}></input>
             </div>
            <hr/>
             <div>
@@ -137,9 +162,8 @@ const PositionSetup = () => {
     const [castle, setCastle] = useState(emptyCastle)
 
     const [enPassantSquare, setEnPassantSquare] = useState('-')
-    const [halfMoveClock, setHalfMoveClock] = useState('0')
+    const [halfMoveClock, setHalfMoveClock] = useState(0)
     const [fullMoveNumber, setFullMoveNumber] = useState('1')
-    // enPassantSquare: '-', halfMoveClock: '0', fullMoveNumber: '1'
 
     const [fen, setFen] = useState(makeFen(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber))
     const [analysis, setAnalysis] = useState(makeAnalysis(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen))
@@ -189,6 +213,21 @@ const PositionSetup = () => {
         calculateBits(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
     }
 
+    const changeEnPassantSquare = enPassantSquare => {
+        setEnPassantSquare(enPassantSquare)
+        calculateBits(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
+    }
+
+    const changeHalfmoveClock = halfMoveClock => {
+        setHalfMoveClock(halfMoveClock)
+        calculateBits(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
+    }
+
+    const changeFullmoveNumber = fullMoveNumber => {
+        setFullMoveNumber(fullMoveNumber)
+        calculateBits(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
+    }
+
     return (
         <div className='game'>
             <DumbBoard
@@ -208,6 +247,9 @@ const PositionSetup = () => {
                 changePosition={changePosition}
                 changeTurn={changeTurn}
                 changeCastle={changeCastle}
+                changeEnPassantSquare={changeEnPassantSquare}
+                changeHalfmoveClock={changeHalfmoveClock}
+                changeFullmoveNumber={changeFullmoveNumber}            
             />
         </div>
     )
