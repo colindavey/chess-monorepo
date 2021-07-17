@@ -154,13 +154,13 @@ const makeAnalysis = (position, turn, castle, enPassantSquare, halfMoveClock, fu
 const PositionSetup = () => {
     const initCastle = 'KQkq'
     const emptyCastle = '-'
+    const shallowDefaultPosition = chessApi.emptyPosition
 
     const [piece, setPiece] = useState('K')
 
-    const [position, setPosition] = useState(chessApi.emptyPosition)
+    const [position, setPosition] = useState(JSON.parse(JSON.stringify(shallowDefaultPosition)))
     const [turn, setTurn] = useState('W')
     const [castle, setCastle] = useState(emptyCastle)
-
     const [enPassantSquare, setEnPassantSquare] = useState('-')
     const [halfMoveClock, setHalfMoveClock] = useState(0)
     const [fullMoveNumber, setFullMoveNumber] = useState('1')
@@ -190,17 +190,12 @@ const PositionSetup = () => {
     const changePosition = str => {
         const defaultTurn = 'W'
         setTurn(defaultTurn)
-        if (str === 'init') {
-            setPosition(chessApi.initPosition)
-            setCastle(initCastle)
-            setFen(makeFen(chessApi.initPosition, defaultTurn, initCastle, enPassantSquare, halfMoveClock, fullMoveNumber))
-            calculateBits(chessApi.initPosition, defaultTurn, initCastle, enPassantSquare, halfMoveClock, fullMoveNumber)
-        } else {
-            setPosition(chessApi.emptyPosition)            
-            setCastle(emptyCastle)
-            setFen(makeFen(chessApi.emptyPosition, defaultTurn, emptyCastle, enPassantSquare, halfMoveClock, fullMoveNumber))
-            calculateBits(chessApi.emptyPosition, defaultTurn, emptyCastle, enPassantSquare, halfMoveClock, fullMoveNumber)
-        }
+        const [positionShallow, castle] = str === 'init' ? [chessApi.initPosition, initCastle] : [chessApi.emptyPosition, emptyCastle]
+        const positionDeep = JSON.parse(JSON.stringify(positionShallow))
+        setPosition(positionDeep)
+        setCastle(castle)
+        setFen(makeFen(positionDeep, defaultTurn, castle, enPassantSquare, halfMoveClock, fullMoveNumber))
+        calculateBits(positionDeep, defaultTurn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
     }
 
     const changeTurn = newTurn => {
