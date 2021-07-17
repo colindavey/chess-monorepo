@@ -154,7 +154,7 @@ const GameView = ({
 }
 
 const Game = () => {
-    const initGameState = chessApi.init()
+    const initGameState = chessApi.initGame()
     // const [gameState, setGameState] = useState(initGameState)
     const [moves, setMoves] = useState([])
     const [currentMoveNum, setCurrentMoveNum] = useState(0)
