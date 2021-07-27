@@ -40,7 +40,8 @@ const chessApiState = game => {
         chess_ob: game,
         moves: game.history(),
         legalMoves: mappedMoves,
-        position: board2Position(game.board())
+        position: board2Position(game.board()),
+        status: analyzeGame(game)
     }
 }
 

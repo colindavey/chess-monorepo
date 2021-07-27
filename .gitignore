@@ -23,5 +23,9 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+.netlify/
+build/
+netlify.toml
+
 # my
 junk

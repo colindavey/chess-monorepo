@@ -104,7 +104,7 @@ const ChessListingGrid = ({ moves, currentMoveNum, handleClick }) => {
     )
 }
 
-const GameInfo = ({ moves, currentMoveNum, handleListingClick }) => {
+const GameInfo = ({ moves, status, currentMoveNum, handleListingClick }) => {
     // const winner = calculateWinner(DIMS, history[currentMoveNum].squares);
     // let status;
     // if (winner) {
@@ -114,7 +114,7 @@ const GameInfo = ({ moves, currentMoveNum, handleListingClick }) => {
     // } else {
     //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
     // }
-    const status = 'Next player: ' + chessUtils.moveNum2Color(currentMoveNum)
+    // const status = 'Next player: ' + chessUtils.moveNum2Color(currentMoveNum)
 
     return (
         <div className='game-info'>
@@ -133,6 +133,7 @@ const GameView = ({
     currentMoveNum,
     legalMoves,
     moves,
+    status,
     handleMove,
     handleListingClick
 }) => {
@@ -146,6 +147,7 @@ const GameView = ({
             />
             <GameInfo
                 moves={moves}
+                status={status}
                 currentMoveNum={currentMoveNum}
                 handleListingClick={handleListingClick}
             />
@@ -160,6 +162,7 @@ const Game = () => {
     const [currentMoveNum, setCurrentMoveNum] = useState(0)
     const [position, setPosition] = useState(initGameState.position)
     const [legalMoves, setLegalMoves] = useState(initGameState.legalMoves)
+    const [status, setStatus] = useState(initGameState.status)
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
@@ -180,11 +183,12 @@ const Game = () => {
         updateState(chessApiState, moveNum)
     }
 
-    const updateState = ({ position, legalMoves }, moveNum) => {
+    const updateState = ({ position, legalMoves, status }, moveNum) => {
         // setGameState(chessApiState);
         setPosition(position)
         setLegalMoves(legalMoves)
         setCurrentMoveNum(moveNum)
+        setStatus(status)
     }
 
     return (
@@ -193,6 +197,7 @@ const Game = () => {
             turn={chessUtils.moveNum2Color(currentMoveNum)}
             legalMoves={legalMoves}
             moves={moves}
+            status={status}
             currentMoveNum={currentMoveNum}
             handleMove={handleMove}
             handleListingClick={handleListingClick}
