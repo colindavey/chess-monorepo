@@ -33,39 +33,6 @@ export const board2Position = board => {
     /* eslint-enable */
 }
 
-const chessApiState = game => {
-    const legalMoves = game.moves({ verbose: true })
-    const mappedMoves = legalMoves.map(move => `${move.from}${move.to}`)
-    return {
-        chess_ob: game,
-        moves: game.history(),
-        legalMoves: mappedMoves,
-        position: board2Position(game.board()),
-        status: analyzeGame(game)
-    }
-}
-
-export const initGame = () => {
-    const game = calcGame([])
-    return chessApiState(game)
-}
-
-export const emptyGame = () => {
-    const game = new Chess()
-    game.clear()
-    return chessApiState(game)
-}
-
-const initGameState = initGame()
-export const initPosition = initGameState.position
-const emptyGameState = emptyGame()
-export const emptyPosition = emptyGameState.position
-
-export const analyzeFen = fen => {
-    const game = new Chess(fen)
-    return analyzeGame(game)
-}
-
 export const analyzeGame = game => {
     const msg = []
     const turn = game.turn() === 'w' ? 'White' : 'Black'
@@ -91,6 +58,41 @@ export const analyzeGame = game => {
         }
     }
     return msg
+}
+
+const chessApiState = game => {
+    console.log('chessApiState', game)
+    const legalMoves = game.moves({ verbose: true })
+    const mappedMoves = legalMoves.map(move => `${move.from}${move.to}`)
+    return {
+        chess_ob: game,
+        moves: game.history(),
+        legalMoves: mappedMoves,
+        position: board2Position(game.board()),
+        status: analyzeGame(game)
+    }
+}
+
+export const initGame = () => {
+    console.log('initGame')
+    const game = calcGame([])
+    return chessApiState(game)
+}
+
+export const emptyGame = () => {
+    const game = new Chess()
+    game.clear()
+    return chessApiState(game)
+}
+
+const initGameState = initGame()
+export const initPosition = initGameState.position
+const emptyGameState = emptyGame()
+export const emptyPosition = emptyGameState.position
+
+export const analyzeFen = fen => {
+    const game = new Chess(fen)
+    return analyzeGame(game)
 }
 
 export const setup2Fen = ({
