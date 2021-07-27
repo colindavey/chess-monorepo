@@ -61,7 +61,6 @@ export const analyzeGame = game => {
 }
 
 const chessApiState = game => {
-    console.log('chessApiState', game)
     const legalMoves = game.moves({ verbose: true })
     const mappedMoves = legalMoves.map(move => `${move.from}${move.to}`)
     return {
@@ -74,7 +73,6 @@ const chessApiState = game => {
 }
 
 export const initGame = () => {
-    console.log('initGame')
     const game = calcGame([])
     return chessApiState(game)
 }
