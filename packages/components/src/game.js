@@ -27,7 +27,27 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
                 return
             }
             if (legalDests.includes(chessUtils.boardCoord2uci(boardCoord))) {
-                onMove(click1, boardCoord)
+                let promotion = ''
+                if (
+                    position[click1.row][click1.col] === 'P' &&
+                    boardCoord.row === 7
+                ) {
+                    console.log('white promote')
+                    promotion = 'N'
+                } else if (
+                    position[click1.row][click1.col] === 'p' &&
+                    boardCoord.row === 0
+                ) {
+                    console.log('black promote')
+                    promotion = 'n'
+                }
+                console.log(
+                    click1,
+                    boardCoord,
+                    position[click1.row][click1.col],
+                    chessUtils.piece2Color(position[click1.row][click1.col])
+                )
+                onMove(click1, boardCoord, promotion)
             }
             setClick1(null)
             setHighlightList([])
@@ -121,6 +141,7 @@ const GameView = ({
     currentMoveNum,
     legalMoves,
     moves,
+    turn,
     status,
     handleMove,
     handleListingClick
@@ -129,7 +150,7 @@ const GameView = ({
         <div className='game'>
             <SmartBoard
                 position={position}
-                turn={chessUtils.moveNum2Color(currentMoveNum)}
+                turn={turn}
                 onMove={handleMove}
                 legalMoves={legalMoves}
             />
@@ -145,7 +166,9 @@ const GameView = ({
 
 const Game = () => {
     // const initGameState = chessApi.initGameState
-    const fen = 'k1K5/8/6P1/8/8/8/8/8 w - - 0 1'
+    // const fen = 'k1K5/8/6P1/8/8/8/8/8 w - - 0 1'
+    const fen = '8/8/8/8/8/5p2/8/K1k5 b - - 0 1'
+    // const fen = '8/8/8/8/8/5p2/8/K1k5 w - - 0 1'
     // const fen = null
     const initGameState = chessApi.initGame(fen)
     // const initGameState = chessApi.fen2Game('k1K5/8/6P1/8/8/8/8/8 w - - 0 1')
@@ -154,20 +177,15 @@ const Game = () => {
     const [position, setPosition] = useState(initGameState.position)
     const [legalMoves, setLegalMoves] = useState(initGameState.legalMoves)
     const [status, setStatus] = useState(initGameState.status)
+    const [turn, setTurn] = useState(initGameState.turn)
 
     // Should only get here if legal move has been made
-    const handleMove = (click1, click2) => {
-        console.log('handleMove')
+    const handleMove = (click1, click2, promotion) => {
         const localMoves = moves.slice(0, currentMoveNum)
-        console.log(position)
-        const chessApiState = chessApi.moveAdd(
-            localMoves,
-            `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(
-                click2
-            )}`,
-            fen
-        )
-        console.log(chessApiState)
+        const newMove = `${chessUtils.boardCoord2uci(
+            click1
+        )}${chessUtils.boardCoord2uci(click2)}${promotion}`
+        const chessApiState = chessApi.moveAdd(localMoves, newMove, fen)
         setMoves(chessApiState.moves)
         updateState(chessApiState, localMoves.length + 1)
     }
@@ -178,20 +196,21 @@ const Game = () => {
         updateState(chessApiState, moveNum)
     }
 
-    const updateState = ({ position, legalMoves, status }, moveNum) => {
-        console.log('updateState', position)
+    const updateState = ({ position, legalMoves, status, turn }, moveNum) => {
         // setGameState(chessApiState);
         setPosition(position)
         setLegalMoves(legalMoves)
         setCurrentMoveNum(moveNum)
         setStatus(status)
+        setTurn(turn)
     }
 
+    // turn={chessUtils.moveNum2Color(currentMoveNum)}
     return (
         <GameView
             position={position}
-            turn={chessUtils.moveNum2Color(currentMoveNum)}
             legalMoves={legalMoves}
+            turn={turn}
             moves={moves}
             status={status}
             currentMoveNum={currentMoveNum}

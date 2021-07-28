@@ -47,6 +47,9 @@ export const analyzeGame = game => {
                 msg.push('Draw by threefold repetition.')
             } else if (game.insufficient_material()) {
                 msg.push('Draw by insufficient material.')
+            // Note there is no explicit test for 50-move rule
+            // so I assume if it's a draw and no other test works
+            // then it must be 50-move.
             } else {
                 msg.push('Draw by 50-move rule.')
             }
@@ -68,6 +71,7 @@ const chessApiState = game => {
         moves: game.history(),
         legalMoves: mappedMoves,
         position: board2Position(game.board()),
+        turn: game.turn().toUpperCase(),
         status: analyzeGame(game)
     }
 }
