@@ -13,7 +13,6 @@ import * as chessUtils from './chessUtils.js'
 // ]
 
 export const calcGame = (moves, fen) => {
-    console.log('calcGame', moves, fen)
     const game = fen ? new Chess(fen) : new Chess()
     moves.forEach(element => {
         game.move(element)
@@ -140,7 +139,6 @@ export const moveTo = (moves, fen) => {
 }
 
 export const moveAdd = (moves, newMove, fen) => {
-    console.log('moveAdd', moves, newMove, fen)
     const game = calcGame(moves, fen)
     game.move(newMove, { sloppy: true })
     return chessApiState(game)
