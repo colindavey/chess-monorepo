@@ -105,17 +105,6 @@ const ChessListingGrid = ({ moves, currentMoveNum, handleClick }) => {
 }
 
 const GameInfo = ({ moves, status, currentMoveNum, handleListingClick }) => {
-    // const winner = calculateWinner(DIMS, history[currentMoveNum].squares);
-    // let status;
-    // if (winner) {
-    //     status = 'Winner: ' + winner.winner;
-    // } else if (currentMoveNum === DIMS*DIMS) {
-    //     status = "Draw";
-    // } else {
-    //     status = 'Next player: ' + moveNum2Color(currentMoveNum);
-    // }
-    // const status = 'Next player: ' + chessUtils.moveNum2Color(currentMoveNum)
-
     return (
         <div className='game-info'>
             {status}
@@ -156,8 +145,11 @@ const GameView = ({
 }
 
 const Game = () => {
-    const initGameState = chessApi.initGame()
-    // const [gameState, setGameState] = useState(initGameState)
+    // const initGameState = chessApi.initGameState
+    const fen = 'k1K5/8/6P1/8/8/8/8/8 w - - 0 1'
+    // const fen = null
+    const initGameState = chessApi.initGame(fen)
+    // const initGameState = chessApi.fen2Game('k1K5/8/6P1/8/8/8/8/8 w - - 0 1')
     const [moves, setMoves] = useState([])
     const [currentMoveNum, setCurrentMoveNum] = useState(0)
     const [position, setPosition] = useState(initGameState.position)
@@ -166,24 +158,29 @@ const Game = () => {
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2) => {
+        console.log('handleMove')
         const localMoves = moves.slice(0, currentMoveNum)
+        console.log(position)
         const chessApiState = chessApi.moveAdd(
             localMoves,
             `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(
                 click2
-            )}`
+            )}`,
+            fen
         )
+        console.log(chessApiState)
         setMoves(chessApiState.moves)
         updateState(chessApiState, localMoves.length + 1)
     }
 
     const handleListingClick = moveNum => {
-        const chessApiState = chessApi.moveTo(moves.slice(0, moveNum))
+        const chessApiState = chessApi.moveTo(moves.slice(0, moveNum), fen)
         // setMoves(chessApiState.moves)
         updateState(chessApiState, moveNum)
     }
 
     const updateState = ({ position, legalMoves, status }, moveNum) => {
+        console.log('updateState', position)
         // setGameState(chessApiState);
         setPosition(position)
         setLegalMoves(legalMoves)

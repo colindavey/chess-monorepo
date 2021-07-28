@@ -12,8 +12,9 @@ import * as chessUtils from './chessUtils.js'
 //     ['', '', '', '', '', '', '', '']
 // ]
 
-export const calcGame = moves => {
-    const game = new Chess()
+export const calcGame = (moves, fen) => {
+    console.log('calcGame', moves, fen)
+    const game = fen ? new Chess(fen) : new Chess()
     moves.forEach(element => {
         game.move(element)
     })
@@ -64,7 +65,7 @@ const chessApiState = game => {
     const legalMoves = game.moves({ verbose: true })
     const mappedMoves = legalMoves.map(move => `${move.from}${move.to}`)
     return {
-        chess_ob: game,
+        game: game,
         moves: game.history(),
         legalMoves: mappedMoves,
         position: board2Position(game.board()),
@@ -72,8 +73,8 @@ const chessApiState = game => {
     }
 }
 
-export const initGame = () => {
-    const game = calcGame([])
+export const initGame = (fen = null) => {
+    const game = calcGame([], fen)
     return chessApiState(game)
 }
 
@@ -83,7 +84,12 @@ export const emptyGame = () => {
     return chessApiState(game)
 }
 
-const initGameState = initGame()
+export const fen2Game = fen => {
+    const game = new Chess(fen)
+    return chessApiState(game)
+}
+
+export const initGameState = initGame()
 export const initPosition = initGameState.position
 const emptyGameState = emptyGame()
 export const emptyPosition = emptyGameState.position
@@ -128,13 +134,14 @@ export const inCheck = fen => {
     return game.in_check()
 }
 
-export const moveTo = moves => {
-    const game = calcGame(moves)
+export const moveTo = (moves, fen) => {
+    const game = calcGame(moves, fen)
     return chessApiState(game)
 }
 
-export const moveAdd = (moves, newMove) => {
-    const game = calcGame(moves)
+export const moveAdd = (moves, newMove, fen) => {
+    console.log('moveAdd', moves, newMove, fen)
+    const game = calcGame(moves, fen)
     game.move(newMove, { sloppy: true })
     return chessApiState(game)
 }
