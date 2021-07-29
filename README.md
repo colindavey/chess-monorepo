@@ -1,4 +1,6 @@
 # chess-monorepo
+The purpose of this monorepo is to develop a family of web-based chess apps that share components. 
+<img src="https://github.com/colindavey/chess-monorepo/blob/master/images/chessMonorepoDiagram.jpg" width="200"/>
 To use, after cloning, from root directory run 
 ```
 yarn install
