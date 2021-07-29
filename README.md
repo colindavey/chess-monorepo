@@ -27,4 +27,4 @@ To run the simple Board-clicker app (just logs to the console the square that yo
 cd packages/chess-board-clicker
 yarn start
 ```
-<img src="https://github.com/colindavey/chess-monorepo/blob/master/images/mono-clicker.png" width="200"/>
+<img src="https://github.com/colindavey/colindavey/blob/master/images/mono-clicker.png" width="200"/>
