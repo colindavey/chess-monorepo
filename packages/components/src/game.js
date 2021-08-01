@@ -3,10 +3,51 @@ import DumbBoard from './dumbBoard'
 import * as chessApi from './chessApi.js'
 import * as chessUtils from './chessUtils.js'
 
+const modalContainerStyle = {
+    zIndex: '3',
+    position: 'fixed',
+    left: '0',
+    top: '0',
+    width: '100%',
+    height: '100%',
+    overflow: 'auto',
+    backgroundColor: 'rgba(0,0,0,0.4)'
+}
+
+const promotionStyle = {
+    position: 'fixed',
+    padding: '5px',
+    background: 'rgba(0.0, 0.0, 0.0, 0.9)'
+}
+
+const ModalPromotion = ({ turn, promoteCallback }) => {
+    console.log(turn)
+    const qSym =
+        turn === 'B' ? chessUtils.pieceLookup.q : chessUtils.pieceLookup.Q
+    const rSym =
+        turn === 'B' ? chessUtils.pieceLookup.r : chessUtils.pieceLookup.R
+    const bSym =
+        turn === 'B' ? chessUtils.pieceLookup.b : chessUtils.pieceLookup.B
+    const nSym =
+        turn === 'B' ? chessUtils.pieceLookup.n : chessUtils.pieceLookup.N
+    return (
+        <div style={modalContainerStyle}>
+            <div style={promotionStyle}>
+                <button onClick={() => promoteCallback('Q')}>{qSym}</button>
+                <button onClick={() => promoteCallback('R')}>{rSym}</button>
+                <button onClick={() => promoteCallback('B')}>{bSym}</button>
+                <button onClick={() => promoteCallback('N')}>{nSym}</button>
+                <button onClick={() => promoteCallback('')}>Cancel</button>
+            </div>
+        </div>
+    )
+}
+
 const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
     const [click1, setClick1] = useState(null)
     const [legalDests, setLegalDests] = useState([])
     const [highlightList, setHighlightList] = useState([])
+    const [showPromotion, setShowPromotion] = useState(true)
 
     const handleClick = boardCoord => {
         if (
@@ -34,12 +75,25 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
         }
     }
 
+    const promotionCallback = value => {
+        console.log(value)
+        setShowPromotion(false)
+    }
+
     return (
-        <DumbBoard
-            position={position}
-            highlightList={highlightList}
-            handleClick={handleClick}
-        />
+        <div>
+            <DumbBoard
+                position={position}
+                highlightList={highlightList}
+                handleClick={handleClick}
+            />
+            {showPromotion && (
+                <ModalPromotion
+                    turn={turn}
+                    promoteCallback={promotionCallback}
+                />
+            )}
+        </div>
     )
 }
 
