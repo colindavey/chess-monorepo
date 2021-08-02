@@ -45,9 +45,10 @@ const ModalPromotion = ({ turn, promoteCallback }) => {
 
 const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
     const [click1, setClick1] = useState(null)
+    const [click2, setClick2] = useState(null)
     const [legalDests, setLegalDests] = useState([])
     const [highlightList, setHighlightList] = useState([])
-    const [showPromotion, setShowPromotion] = useState(true)
+    const [showPromotion, setShowPromotion] = useState(false)
 
     const handleClick = boardCoord => {
         if (
@@ -68,16 +69,36 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
                 return
             }
             if (legalDests.includes(chessUtils.boardCoord2uci(boardCoord))) {
+                // Deal with promotion
+                if (
+                    (position[click1.row][click1.col] === 'P' &&
+                        boardCoord.row === 7) ||
+                    (position[click1.row][click1.col] === 'p' &&
+                        boardCoord.row === 0)
+                ) {
+                    setShowPromotion(true)
+                    setClick2(boardCoord)
+                    return
+                }
                 onMove(click1, boardCoord)
             }
-            setClick1(null)
-            setHighlightList([])
+            clearClicks()
         }
     }
 
     const promotionCallback = value => {
         console.log(value)
+        if (value) {
+            onMove(click1, click2, value)
+        }
         setShowPromotion(false)
+        clearClicks()
+    }
+
+    const clearClicks = () => {
+        setClick1(null)
+        setClick2(null)
+        setHighlightList([])
     }
 
     return (
@@ -210,7 +231,7 @@ const Game = () => {
     const [status, setStatus] = useState(initGameState.status)
 
     // Should only get here if legal move has been made
-    const handleMove = (click1, click2) => {
+    const handleMove = (click1, click2, promotion = '') => {
         console.log('handleMove')
         const localMoves = moves.slice(0, currentMoveNum)
         console.log(position)
@@ -218,7 +239,7 @@ const Game = () => {
             localMoves,
             `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(
                 click2
-            )}`,
+            )}${promotion}`,
             fen
         )
         console.log(chessApiState)
