@@ -20,8 +20,10 @@ const promotionStyle = {
     background: 'rgba(0.0, 0.0, 0.0, 0.9)'
 }
 
-const ModalPromotion = ({ turn, promoteCallback }) => {
-    console.log(turn)
+const ModalPromotion = ({ turn, promoteCallback, clientX, clientY }) => {
+    const promotionStyleTmp = JSON.parse(JSON.stringify(promotionStyle))
+    promotionStyleTmp.left = clientX
+    promotionStyleTmp.top = clientY
     const qSym =
         turn === 'B' ? chessUtils.pieceLookup.q : chessUtils.pieceLookup.Q
     const rSym =
@@ -32,7 +34,7 @@ const ModalPromotion = ({ turn, promoteCallback }) => {
         turn === 'B' ? chessUtils.pieceLookup.n : chessUtils.pieceLookup.N
     return (
         <div style={modalContainerStyle}>
-            <div style={promotionStyle}>
+            <div style={promotionStyleTmp}>
                 <button onClick={() => promoteCallback('Q')}>{qSym}</button>
                 <button onClick={() => promoteCallback('R')}>{rSym}</button>
                 <button onClick={() => promoteCallback('B')}>{bSym}</button>
@@ -49,8 +51,10 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
     const [legalDests, setLegalDests] = useState([])
     const [highlightList, setHighlightList] = useState([])
     const [showPromotion, setShowPromotion] = useState(false)
+    const [clientX, setClientX] = useState(0)
+    const [clientY, setClientY] = useState(0)
 
-    const handleClick = boardCoord => {
+    const handleClick = ({ clientX, clientY }, boardCoord) => {
         if (
             chessUtils.piece2Color(position[boardCoord.row][boardCoord.col]) ===
             turn
@@ -78,6 +82,8 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
                 ) {
                     setShowPromotion(true)
                     setClick2(boardCoord)
+                    setClientX(clientX)
+                    setClientY(clientY)
                     return
                 }
                 onMove(click1, boardCoord)
@@ -87,7 +93,6 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
     }
 
     const promotionCallback = value => {
-        console.log(value)
         if (value) {
             onMove(click1, click2, value)
         }
@@ -112,6 +117,8 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
                 <ModalPromotion
                     turn={turn}
                     promoteCallback={promotionCallback}
+                    clientX={clientX}
+                    clientY={clientY}
                 />
             )}
         </div>
@@ -232,9 +239,7 @@ const Game = () => {
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2, promotion = '') => {
-        console.log('handleMove')
         const localMoves = moves.slice(0, currentMoveNum)
-        console.log(position)
         const chessApiState = chessApi.moveAdd(
             localMoves,
             `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(
@@ -242,7 +247,6 @@ const Game = () => {
             )}${promotion}`,
             fen
         )
-        console.log(chessApiState)
         setMoves(chessApiState.moves)
         updateState(chessApiState, localMoves.length + 1)
     }
@@ -254,7 +258,6 @@ const Game = () => {
     }
 
     const updateState = ({ position, legalMoves, status }, moveNum) => {
-        console.log('updateState', position)
         // setGameState(chessApiState);
         setPosition(position)
         setLegalMoves(legalMoves)

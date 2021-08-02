@@ -30,7 +30,7 @@ const DumbBoard = ({ position, highlightList, handleClick }) => {
             <Square
                 key={chessUtils.boardCoord2key(DIMS, boardCoord)}
                 piece={piece}
-                onClick={() => handleClick(boardCoord)}
+                onClick={e => handleClick(e, boardCoord)}
                 highlighted={highlighted}
                 colorClass={colorClass}
             />
