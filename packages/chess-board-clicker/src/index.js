@@ -6,7 +6,7 @@ import { DumbBoard } from 'components'
 import * as chessApi from 'components' 
 
 const BoardClicker = () => {
-    const handleClick = boardCoord => console.log('click', boardCoord)
+    const handleClick = (_e, boardCoord) => console.log('click', boardCoord)
     const highlightList = []
     const position = chessApi.emptyPosition
     return (

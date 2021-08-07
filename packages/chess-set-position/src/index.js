@@ -5,6 +5,8 @@ import { DumbBoard } from 'components'
 import * as chessApi from 'components'
 import * as chessUtils from 'components'
 
+const GAME_URL = 'https://colindavey-chess-monorepo-game.netlify.app'
+
 const SetupPanel = ({
     turn,
     castle,
@@ -12,6 +14,7 @@ const SetupPanel = ({
     halfMoveClock,
     fullMoveNumber,
     fen,
+    illegal,
     analysis,
     changePiece,
     changePosition,
@@ -21,7 +24,7 @@ const SetupPanel = ({
     changeHalfmoveClock,
     changeFullmoveNumber
 }) => {
-
+    console.log(illegal)
     const onChangePiece = (event) => {
         changePiece(event.target.value)
     }
@@ -117,6 +120,7 @@ const SetupPanel = ({
                 {fen}
             </div>
             <hr/>
+            <a href={`${GAME_URL}?fen=${encodeURIComponent(fen)}`}><button disabled={illegal}>Play</button></a>
             <div>
                 {analysis.map((item, index) => <div key={index}>{item}</div>)}
             </div>
@@ -126,12 +130,13 @@ const SetupPanel = ({
 // <div style={{width: '80px', whiteSpace: 'nowrap'}}>
 // <div style={{width: '80px'}}>
 // <div>
+// {encodeURIComponent(fen)}
 
 const makeFen = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber) => {
     return chessApi.setup2Fen({ position: position, turn: turn, castle: castle, enPassantSquare: enPassantSquare, halfMoveClock: halfMoveClock, fullMoveNumber: fullMoveNumber })
 }
 
-const makeAnalysis = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen) => {
+const checkLegalPos = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber) => {
     const illegalCheck = chessUtils.checkLegalPos(position, castle)
     // Tests that require chessAPI
     const tmpFen = makeFen(position, turn === 'B' ? 'W' : 'B', castle, enPassantSquare, halfMoveClock, fullMoveNumber)
@@ -148,8 +153,18 @@ const makeAnalysis = (position, turn, castle, enPassantSquare, halfMoveClock, fu
     if (illegalCheck.length) {
         illegalCheck.unshift('Illegal position: ')
     }
-    return illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
+    return illegalCheck
 }
+
+// const makeAnalysis = (illegalCheck, fen) => {
+//     // const illegalCheck = checkLegalPos(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
+//     return illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
+// }
+const makeAnalysis = (illegalCheck, fen) => illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
+// {
+//     // const illegalCheck = checkLegalPos(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
+//     return illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
+// }
 
 const PositionSetup = () => {
     const initCastle = 'KQkq'
@@ -166,14 +181,16 @@ const PositionSetup = () => {
     const [fullMoveNumber, setFullMoveNumber] = useState('1')
 
     const [fen, setFen] = useState(makeFen(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber))
-    const [analysis, setAnalysis] = useState(makeAnalysis(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen))
+    const [illegalCheck, setIllegalCheck] = useState(checkLegalPos(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber))
+    const [analysis, setAnalysis] = useState(makeAnalysis(illegalCheck, fen))
     
     // const highlightList = []
 
     const calculateBits = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber) => {
         const fen = makeFen(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
         setFen(fen)
-        setAnalysis(makeAnalysis(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber, fen))
+        setIllegalCheck(checkLegalPos(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber))
+        setAnalysis(makeAnalysis(illegalCheck, fen))
     }
 
     const changePiece = piece => {
@@ -181,7 +198,7 @@ const PositionSetup = () => {
         setPiece(newPiece)
     }
 
-    const handleClick = boardCoord => {
+    const handleClick = (_e, boardCoord) => {
         position[boardCoord.row][boardCoord.col] = piece
         setPosition([...position])
         calculateBits(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
@@ -237,6 +254,7 @@ const PositionSetup = () => {
                 halfMoveClock={halfMoveClock}
                 fullMoveNumber={fullMoveNumber}
                 fen={fen}
+                illegal={illegalCheck.length}
                 analysis={analysis}
                 changePiece={changePiece}
                 changePosition={changePosition}

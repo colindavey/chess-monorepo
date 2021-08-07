@@ -227,10 +227,21 @@ const GameView = ({
 
 const Game = () => {
     // const initGameState = chessApi.initGameState
-    const fen = 'k1K5/8/6P1/8/8/8/8/8 w - - 0 1'
+    // const fen = 'k1K5/8/6P1/8/8/8/8/8 w - - 0 1'
     // const fen = null
+    // const urlSearchParams = new URLSearchParams(
+    //     window.location.search.split('?')[0]
+    // )
+    const urlSearchParams = new URLSearchParams(window.location.search)
+    const params = Object.fromEntries(urlSearchParams.entries())
+    console.log(window.location.search)
+    // console.log(urlSearchParams)
+    console.log('fen', params.fen)
+    const fen = params.fen
+
     const initGameState = chessApi.initGame(fen)
     // const initGameState = chessApi.fen2Game('k1K5/8/6P1/8/8/8/8/8 w - - 0 1')
+
     const [moves, setMoves] = useState([])
     const [currentMoveNum, setCurrentMoveNum] = useState(0)
     const [position, setPosition] = useState(initGameState.position)
