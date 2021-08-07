@@ -264,16 +264,8 @@ const checkLegalPos = (
     return illegalCheck
 }
 
-// const makeAnalysis = (illegalCheck, fen) => {
-//     // const illegalCheck = checkLegalPos(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
-//     return illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
-// }
 const makeAnalysis = (illegalCheck, fen) =>
     illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
-// {
-//     // const illegalCheck = checkLegalPos(position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber)
-//     return illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
-// }
 
 const PositionSetup = () => {
     const initCastle = 'KQkq'
@@ -332,16 +324,15 @@ const PositionSetup = () => {
             fullMoveNumber
         )
         setFen(fen)
-        setIllegalCheck(
-            checkLegalPos(
-                position,
-                turn,
-                castle,
-                enPassantSquare,
-                halfMoveClock,
-                fullMoveNumber
-            )
+        const illegalCheck = checkLegalPos(
+            position,
+            turn,
+            castle,
+            enPassantSquare,
+            halfMoveClock,
+            fullMoveNumber
         )
+        setIllegalCheck(illegalCheck)
         setAnalysis(makeAnalysis(illegalCheck, fen))
     }
 
