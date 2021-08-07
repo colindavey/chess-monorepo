@@ -125,7 +125,13 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
     )
 }
 
-const ChessListingGrid = ({ moves, currentMoveNum, handleClick }) => {
+const ChessListingGrid = ({
+    moves,
+    currentMoveNum,
+    handleClick,
+    setupUrl,
+    fen
+}) => {
     const tableMoves = []
     for (let i = 0; i < moves.length; i += 2) {
         tableMoves.push([
@@ -181,11 +187,21 @@ const ChessListingGrid = ({ moves, currentMoveNum, handleClick }) => {
                 &gt;
             </button>
             <button onClick={() => handleClick(moves.length)}>&gt;|</button>
+            <a href={`${setupUrl}?fen=${encodeURIComponent(fen)}`}>
+                <button>Setup</button>
+            </a>
         </div>
     )
 }
 
-const GameInfo = ({ moves, status, currentMoveNum, handleListingClick }) => {
+const GameInfo = ({
+    moves,
+    status,
+    currentMoveNum,
+    handleListingClick,
+    setupUrl,
+    fen
+}) => {
     return (
         <div className='game-info'>
             {status}
@@ -193,6 +209,8 @@ const GameInfo = ({ moves, status, currentMoveNum, handleListingClick }) => {
                 moves={moves}
                 currentMoveNum={currentMoveNum}
                 handleClick={handleListingClick}
+                setupUrl={setupUrl}
+                fen={fen}
             />
         </div>
     )
@@ -205,7 +223,9 @@ const GameView = ({
     moves,
     status,
     handleMove,
-    handleListingClick
+    handleListingClick,
+    setupUrl,
+    fen
 }) => {
     return (
         <div className='game'>
@@ -220,12 +240,15 @@ const GameView = ({
                 status={status}
                 currentMoveNum={currentMoveNum}
                 handleListingClick={handleListingClick}
+                setupUrl={setupUrl}
+                fen={fen}
             />
         </div>
     )
 }
 
-const Game = () => {
+const Game = ({ setupUrl }) => {
+    console.log('game')
     // const initGameState = chessApi.initGameState
     // const fen = 'k1K5/8/6P1/8/8/8/8/8 w - - 0 1'
     // const fen = null
@@ -234,9 +257,13 @@ const Game = () => {
     // )
     const urlSearchParams = new URLSearchParams(window.location.search)
     const params = Object.fromEntries(urlSearchParams.entries())
-    const fen = params.fen
+    console.log('params', params)
+    const initFen = params.fen
+    if (initFen) {
+        chessApi.fen2Setup(initFen)
+    }
 
-    const initGameState = chessApi.initGame(fen)
+    const initGameState = chessApi.initGame(initFen)
     // const initGameState = chessApi.fen2Game('k1K5/8/6P1/8/8/8/8/8 w - - 0 1')
 
     const [moves, setMoves] = useState([])
@@ -244,6 +271,7 @@ const Game = () => {
     const [position, setPosition] = useState(initGameState.position)
     const [legalMoves, setLegalMoves] = useState(initGameState.legalMoves)
     const [status, setStatus] = useState(initGameState.status)
+    const [fen, setFen] = useState(initGameState.fen)
 
     // Should only get here if legal move has been made
     const handleMove = (click1, click2, promotion = '') => {
@@ -253,24 +281,25 @@ const Game = () => {
             `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(
                 click2
             )}${promotion}`,
-            fen
+            initFen
         )
         setMoves(chessApiState.moves)
         updateState(chessApiState, localMoves.length + 1)
     }
 
     const handleListingClick = moveNum => {
-        const chessApiState = chessApi.moveTo(moves.slice(0, moveNum), fen)
+        const chessApiState = chessApi.moveTo(moves.slice(0, moveNum), initFen)
         // setMoves(chessApiState.moves)
         updateState(chessApiState, moveNum)
     }
 
-    const updateState = ({ position, legalMoves, status }, moveNum) => {
+    const updateState = ({ position, legalMoves, status, fen }, moveNum) => {
         // setGameState(chessApiState);
         setPosition(position)
         setLegalMoves(legalMoves)
         setCurrentMoveNum(moveNum)
         setStatus(status)
+        setFen(fen)
     }
 
     return (
@@ -283,6 +312,8 @@ const Game = () => {
             currentMoveNum={currentMoveNum}
             handleMove={handleMove}
             handleListingClick={handleListingClick}
+            setupUrl={setupUrl}
+            fen={fen}
         />
     )
 }

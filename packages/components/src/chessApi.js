@@ -68,7 +68,8 @@ const chessApiState = game => {
         moves: game.history(),
         legalMoves: mappedMoves,
         position: board2Position(game.board()),
-        status: analyzeGame(game)
+        status: analyzeGame(game),
+        fen: game.fen()
     }
 }
 
@@ -106,6 +107,7 @@ export const setup2Fen = ({
     halfMoveClock,
     fullMoveNumber
 }) => {
+    console.log('setup2Fen', turn, typeof fullMoveNumber)
     const game = new Chess()
     game.clear()
     for (let rank = 0; rank < 8; rank++) {
@@ -126,6 +128,22 @@ export const setup2Fen = ({
     // const fen = `${fenTmp} ++++ ${fenPos} ${turn.toLowerCase()} ${castle} ${enPassantSquare} ${halfMove} ${fullMove}`
     const fen = `${fenPos} ${turn.toLowerCase()} ${castle} ${enPassantSquare} ${halfMoveClock} ${fullMoveNumber}`
     return fen
+}
+
+export const fen2Setup = fen => {
+    const game = new Chess(fen)
+    const array = fen.split(' ')
+    const state = chessApiState(game)
+    const result = {
+        position: state.position,
+        turn: array[1].toUpperCase(),
+        castle: array[2],
+        enPassantSquare: array[3],
+        halfMoveClock: array[4],
+        fullMoveNumber: array[5]
+    }
+    // console.log(result)
+    return result
 }
 
 export const inCheck = fen => {

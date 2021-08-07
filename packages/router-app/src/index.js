@@ -29,11 +29,13 @@ export default function App() {
         <Switch>
           <Route path="/setup">
             <PositionSetup 
-            gameUrl='/'
-        />
+              gameUrl='/' 
+            />
           </Route>
           <Route path={["/", "/game"]}>
-              <Game />
+            <Game 
+              setupUrl='/setup' 
+            />
           </Route>
         </Switch>
       </div>

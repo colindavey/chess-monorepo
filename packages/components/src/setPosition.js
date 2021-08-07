@@ -271,16 +271,33 @@ const PositionSetup = ({ gameUrl }) => {
     const emptyCastle = '-'
     const shallowDefaultPosition = chessApi.emptyPosition
 
+    const urlSearchParams = new URLSearchParams(window.location.search)
+    const params = Object.fromEntries(urlSearchParams.entries())
+    const fenIn = params.fen
+    if (fenIn) {
+        chessApi.fen2Setup(fenIn)
+    }
+    const setup = fenIn
+        ? chessApi.fen2Setup(fenIn)
+        : {
+              position: JSON.parse(JSON.stringify(shallowDefaultPosition)),
+              turn: 'W',
+              castle: emptyCastle,
+              enPassantSquare: '-',
+              halfMoveClock: '0',
+              fullMoveNumber: '1'
+          }
+
     const [piece, setPiece] = useState('K')
 
-    const [position, setPosition] = useState(
-        JSON.parse(JSON.stringify(shallowDefaultPosition))
+    const [position, setPosition] = useState(setup.position)
+    const [turn, setTurn] = useState(setup.turn)
+    const [castle, setCastle] = useState(setup.castle)
+    const [enPassantSquare, setEnPassantSquare] = useState(
+        setup.enPassantSquare
     )
-    const [turn, setTurn] = useState('W')
-    const [castle, setCastle] = useState(emptyCastle)
-    const [enPassantSquare, setEnPassantSquare] = useState('-')
-    const [halfMoveClock, setHalfMoveClock] = useState(0)
-    const [fullMoveNumber, setFullMoveNumber] = useState('1')
+    const [halfMoveClock, setHalfMoveClock] = useState(setup.halfMoveClock)
+    const [fullMoveNumber, setFullMoveNumber] = useState(setup.fullMoveNumber)
 
     const [fen, setFen] = useState(
         makeFen(
