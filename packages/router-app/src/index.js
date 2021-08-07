@@ -30,11 +30,8 @@ export default function App() {
           <Route path="/setup">
             <PositionSetup />
           </Route>
-          <Route path="/game">
-            <Game />
-          </Route>
-          <Route path="/">
-            <Game />
+          <Route path={["/", "/game"]}>
+              <Game />
           </Route>
         </Switch>
       </div>

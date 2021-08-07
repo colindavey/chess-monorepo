@@ -234,9 +234,6 @@ const Game = () => {
     // )
     const urlSearchParams = new URLSearchParams(window.location.search)
     const params = Object.fromEntries(urlSearchParams.entries())
-    console.log(window.location.search)
-    // console.log(urlSearchParams)
-    console.log('fen', params.fen)
     const fen = params.fen
 
     const initGameState = chessApi.initGame(fen)
