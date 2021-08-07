@@ -3,8 +3,6 @@ import DumbBoard from './dumbBoard'
 import * as chessApi from './chessApi.js'
 import * as chessUtils from './chessUtils.js'
 
-const GAME_URL = 'https://colindavey-chess-monorepo-game.netlify.app'
-
 const SetupPanel = ({
     turn,
     castle,
@@ -20,7 +18,8 @@ const SetupPanel = ({
     changeCastle,
     changeEnPassantSquare,
     changeHalfmoveClock,
-    changeFullmoveNumber
+    changeFullmoveNumber,
+    gameUrl
 }) => {
     const onChangePiece = event => {
         changePiece(event.target.value)
@@ -188,7 +187,7 @@ const SetupPanel = ({
             <hr />
             <div>{fen}</div>
             <hr />
-            <a href={`${GAME_URL}?fen=${encodeURIComponent(fen)}`}>
+            <a href={`${gameUrl}?fen=${encodeURIComponent(fen)}`}>
                 <button disabled={illegal}>Play</button>
             </a>
             <div>
@@ -267,7 +266,7 @@ const checkLegalPos = (
 const makeAnalysis = (illegalCheck, fen) =>
     illegalCheck.length ? illegalCheck : chessApi.analyzeFen(fen)
 
-const PositionSetup = () => {
+const PositionSetup = ({ gameUrl }) => {
     const initCastle = 'KQkq'
     const emptyCastle = '-'
     const shallowDefaultPosition = chessApi.emptyPosition
@@ -467,6 +466,7 @@ const PositionSetup = () => {
                 changeEnPassantSquare={changeEnPassantSquare}
                 changeHalfmoveClock={changeHalfmoveClock}
                 changeFullmoveNumber={changeFullmoveNumber}
+                gameUrl={gameUrl}
             />
         </div>
     )

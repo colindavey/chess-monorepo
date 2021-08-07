@@ -28,7 +28,9 @@ export default function App() {
             renders the first one that matches the current URL. */}
         <Switch>
           <Route path="/setup">
-            <PositionSetup />
+            <PositionSetup 
+            gameUrl='/'
+        />
           </Route>
           <Route path={["/", "/game"]}>
               <Game />

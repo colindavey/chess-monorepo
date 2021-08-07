@@ -4,6 +4,8 @@ import './index.css';
 import {PositionSetup} from 'components'
 
 ReactDOM.render(
-    <PositionSetup/>,
+    <PositionSetup
+        gameUrl='https://colindavey-chess-monorepo-game.netlify.app'
+    />,
     document.getElementById('root')
 );
