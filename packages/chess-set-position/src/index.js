@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import './index.css';
-import {PositionSetup} from 'components'
+import {PositionSetup} from 'chess-monorepo-components'
 
 ReactDOM.render(
     <PositionSetup

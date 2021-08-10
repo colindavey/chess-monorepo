@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 // import Game from "./game"
-import { DumbBoard } from 'components'
-import * as chessApi from 'components' 
+import { DumbBoard } from 'chess-monorepo-components'
+import * as chessApi from 'chess-monorepo-components' 
 
 const BoardClicker = () => {
     const handleClick = (_e, boardCoord) => console.log('click', boardCoord)

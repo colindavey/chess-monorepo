@@ -7,7 +7,7 @@ import {
   Link
 } from "react-router-dom";
 import './index.css';
-import { PositionSetup, Game } from 'components'
+import { PositionSetup, Game } from 'chess-monorepo-components'
 
 export default function App() {
   return (
