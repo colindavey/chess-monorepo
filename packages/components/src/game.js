@@ -65,9 +65,10 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
                 legalMoves
             )
             setLegalDests(legalDests)
-            const highlightList = legalDests
-            highlightList.push(chessUtils.boardCoord2uci(boardCoord))
-            setHighlightList(highlightList)
+            setHighlightList([
+                ...legalDests,
+                chessUtils.boardCoord2uci(boardCoord)
+            ])
         } else {
             if (!click1) {
                 return
