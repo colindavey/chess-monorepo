@@ -107,7 +107,6 @@ export const setup2Fen = ({
     halfMoveClock,
     fullMoveNumber
 }) => {
-    console.log('setup2Fen', turn, typeof fullMoveNumber)
     const game = new Chess()
     game.clear()
     for (let rank = 0; rank < 8; rank++) {

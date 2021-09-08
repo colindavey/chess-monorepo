@@ -94,17 +94,15 @@ export function checkLegalPos(position, castle) {
     const whiteKCount = positionStats.K.count
     if (whiteKCount === 0) {
         msg.push('No White King.')
-    }
-    if (whiteKCount > 1) {
+    } else if (whiteKCount > 1) {
         msg.push(`${positionStats.K.count} White Kings (must be 1).`)
     }
 
     const blackKCount = positionStats.k.count
     if (blackKCount === 0) {
         msg.push('No Black King.')
-    }
-    if (blackKCount > 1) {
-        msg.push(`${positionStats.K.count} Black Kings (must be 1).`)
+    } else if (blackKCount > 1) {
+        msg.push(`${positionStats.k.count} Black Kings (must be 1).`)
     }
 
     if (blackKCount === 1 && whiteKCount === 1) {
