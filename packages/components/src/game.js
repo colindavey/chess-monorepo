@@ -45,7 +45,7 @@ const ModalPromotion = ({ turn, promoteCallback, clientX, clientY }) => {
     )
 }
 
-const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
+const SmartBoard = ({ position, turn, onMove, legalMoves, over }) => {
     const [click1, setClick1] = useState(null)
     const [click2, setClick2] = useState(null)
     const [legalDests, setLegalDests] = useState([])
@@ -55,41 +55,46 @@ const SmartBoard = ({ position, turn, onMove, legalMoves }) => {
     const [clientY, setClientY] = useState(0)
 
     const handleClick = ({ clientX, clientY }, boardCoord) => {
-        if (
-            chessUtils.piece2Color(position[boardCoord.row][boardCoord.col]) ===
-            turn
-        ) {
-            setClick1(boardCoord)
-            const legalDests = chessUtils.getLegalDestsFrom(
-                boardCoord,
-                legalMoves
-            )
-            setLegalDests(legalDests)
-            setHighlightList([
-                ...legalDests,
-                chessUtils.boardCoord2uci(boardCoord)
-            ])
-        } else {
-            if (!click1) {
-                return
-            }
-            if (legalDests.includes(chessUtils.boardCoord2uci(boardCoord))) {
-                // Deal with promotion
-                if (
-                    (position[click1.row][click1.col] === 'P' &&
-                        boardCoord.row === 7) ||
-                    (position[click1.row][click1.col] === 'p' &&
-                        boardCoord.row === 0)
-                ) {
-                    setShowPromotion(true)
-                    setClick2(boardCoord)
-                    setClientX(clientX)
-                    setClientY(clientY)
+        if (!over) {
+            if (
+                chessUtils.piece2Color(
+                    position[boardCoord.row][boardCoord.col]
+                ) === turn
+            ) {
+                setClick1(boardCoord)
+                const legalDests = chessUtils.getLegalDestsFrom(
+                    boardCoord,
+                    legalMoves
+                )
+                setLegalDests(legalDests)
+                setHighlightList([
+                    ...legalDests,
+                    chessUtils.boardCoord2uci(boardCoord)
+                ])
+            } else {
+                if (!click1) {
                     return
                 }
-                onMove(click1, boardCoord)
+                if (
+                    legalDests.includes(chessUtils.boardCoord2uci(boardCoord))
+                ) {
+                    // Deal with promotion
+                    if (
+                        (position[click1.row][click1.col] === 'P' &&
+                            boardCoord.row === 7) ||
+                        (position[click1.row][click1.col] === 'p' &&
+                            boardCoord.row === 0)
+                    ) {
+                        setShowPromotion(true)
+                        setClick2(boardCoord)
+                        setClientX(clientX)
+                        setClientY(clientY)
+                        return
+                    }
+                    onMove(click1, boardCoord)
+                }
+                clearClicks()
             }
-            clearClicks()
         }
     }
 
@@ -226,7 +231,8 @@ const GameView = ({
     handleMove,
     handleListingClick,
     setupUrl,
-    fen
+    fen,
+    over
 }) => {
     return (
         <div className='game'>
@@ -235,6 +241,7 @@ const GameView = ({
                 turn={chessUtils.moveNum2Color(currentMoveNum)}
                 onMove={handleMove}
                 legalMoves={legalMoves}
+                over={over}
             />
             <GameInfo
                 moves={moves}
@@ -249,7 +256,6 @@ const GameView = ({
 }
 
 const Game = ({ setupUrl }) => {
-    console.log('game')
     // const initGameState = chessApi.initGameState
     // const fen = 'k1K5/8/6P1/8/8/8/8/8 w - - 0 1'
     // const fen = null
@@ -258,7 +264,6 @@ const Game = ({ setupUrl }) => {
     // )
     const urlSearchParams = new URLSearchParams(window.location.search)
     const params = Object.fromEntries(urlSearchParams.entries())
-    console.log('params', params)
     const initFen = params.fen
     if (initFen) {
         chessApi.fen2Setup(initFen)
@@ -272,6 +277,7 @@ const Game = ({ setupUrl }) => {
     const [position, setPosition] = useState(initGameState.position)
     const [legalMoves, setLegalMoves] = useState(initGameState.legalMoves)
     const [status, setStatus] = useState(initGameState.status)
+    const [over, setOver] = useState(initGameState.over)
     const [fen, setFen] = useState(initGameState.fen)
 
     // Should only get here if legal move has been made
@@ -294,12 +300,16 @@ const Game = ({ setupUrl }) => {
         updateState(chessApiState, moveNum)
     }
 
-    const updateState = ({ position, legalMoves, status, fen }, moveNum) => {
+    const updateState = (
+        { position, legalMoves, status, fen, over },
+        moveNum
+    ) => {
         // setGameState(chessApiState);
         setPosition(position)
         setLegalMoves(legalMoves)
         setCurrentMoveNum(moveNum)
         setStatus(status)
+        setOver(over)
         setFen(fen)
     }
 
@@ -315,6 +325,7 @@ const Game = ({ setupUrl }) => {
             handleListingClick={handleListingClick}
             setupUrl={setupUrl}
             fen={fen}
+            over={over}
         />
     )
 }
