@@ -1,36 +1,49 @@
+/* Global */
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
     margin: 20px;
 }
 
-ol, ul {
+/* ol, ul {
     padding-left: 0px;
-}
+} */
 
-.board-row:after {
-    clear: both;
-    content: "";
-    display: table;
-}
-
-.status {
-    margin-bottom: 10px;
-}
-
+/* For Dumb board */
 .square {
     display: flex;
     justify-content: center;
     align-items: center;
     border: 1px solid #999;
     float: left;
-    font-size: 34px;
     font-weight: bold;
-    line-height: 44px;
-    height: 44px;
     /* margin: 1px; */
     padding: 0;
     text-align: center;
+    /* works with screen width of 500 for game, not setup*/
+    /* font-size: 24px;
+    line-height: 33px;
+    height: 33px;
+    width: 33px; */
+    /* small enough to work for everything */
+    /* font-size: 17px;
+    line-height: 22px;
+    height: 22px;
+    width: 22px; */
+    /* this too */
+    /* original values */
+    font-size: 34px;
+    line-height: 44px;
+    height: 44px;
     width: 44px;
+}
+
+@media only screen and (max-width: 685px) {
+    .square {
+        font-size: 20px;
+        line-height: 23px;
+        height: 23px;
+        width: 23px;
+    }    
 }
 
 .square-white {
@@ -53,15 +66,21 @@ ol, ul {
     background: #ddd;
 }
 
-.game {
+/* Experimental, doesn't seem to work */
+/* .board-row {
+    border: 3px blue solid;
     display: flex;
     flex-direction: row;
+} */
+    /* display: inline-block; */
+
+.board-row:after {
+    clear: both;
+    content: "";
+    display: table;
 }
 
-.game-info {
-    margin-left: 20px;
-}
-
+/* For moves listing */
 .grid-cell {
     border-spacing: 0px;
     /* border-collapse: collapse; */
@@ -108,7 +127,6 @@ ol, ul {
     text-align: center;
 }
 
-
 div.scroll { 
     /* margin:4px, 4px;  */
     /* padding:4px;  */
@@ -120,3 +138,19 @@ div.scroll {
     overflow-y: auto; 
     /* text-align:justify;  */
 } 
+
+.status {
+    margin-bottom: 10px;
+}
+
+/* Containers for Apps */
+.game {
+    /* display: block; */
+    display: flex;
+    flex-direction: row;
+    /* flex-direction: column; */
+}
+
+.game-info {
+    margin-left: 20px;
+}

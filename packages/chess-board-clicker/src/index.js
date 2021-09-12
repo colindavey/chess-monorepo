@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-// import Game from "./game"
+import 'chess-monorepo-components/src/styles.css';
 import { DumbBoard } from 'chess-monorepo-components'
 import * as chessApi from 'chess-monorepo-components' 
 

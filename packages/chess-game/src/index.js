@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import 'chess-monorepo-components/src/styles.css';
 import {Game} from 'chess-monorepo-components'
 
 ReactDOM.render(
