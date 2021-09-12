@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DumbBoard from './dumbBoard'
 import * as chessApi from './chessApi.js'
 import * as chessUtils from './chessUtils.js'
@@ -53,6 +53,9 @@ const SmartBoard = ({ position, turn, onMove, legalMoves, over }) => {
     const [showPromotion, setShowPromotion] = useState(false)
     const [clientX, setClientX] = useState(0)
     const [clientY, setClientY] = useState(0)
+
+    // If the position has changed, then highlighting (from click1) should be turned off
+    useEffect(() => clearClicks(), [position])
 
     const handleClick = ({ clientX, clientY }, boardCoord) => {
         if (!over) {
