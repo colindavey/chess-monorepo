@@ -321,6 +321,12 @@ const PositionSetup = ({ gameUrl }) => {
     )
     const [analysis, setAnalysis] = useState(makeAnalysis(illegalCheck, fen))
 
+    const enPassantCandidates = chessUtils.getEnPassantCandidates(
+        position,
+        turn
+    )
+    console.log('enPassantCandidates', enPassantCandidates)
+
     // const highlightList = []
 
     const calculateBits = (

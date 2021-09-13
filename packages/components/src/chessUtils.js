@@ -45,9 +45,9 @@ export function moveNum2Color(moveNum) {
     return ((moveNum % 2) === 0) ? 'W' : 'B'
 }
 
-export function boardCoord2uci(boardCoord) {
-    const file = String.fromCharCode('a'.charCodeAt() + boardCoord.col)
-    const rank = boardCoord.row + 1
+export function boardCoord2uci({ row, col }) {
+    const file = String.fromCharCode('a'.charCodeAt() + col)
+    const rank = row + 1
     return `${file}${rank}`
 }
 
@@ -188,4 +188,26 @@ export function checkLegalPos(position, castle) {
         }
     }
     return msg
+}
+
+export const getEnPassantCandidates = (position, turn) => {
+    const row = turn === 'W' ? 3 : 4
+    const pawn = turn === 'W' ? 'P' : 'p'
+    const searchAdder = turn === 'W' ? -1 : 1
+    const searchAdder2 = 2 * searchAdder
+    const candidateCols = []
+    // Check each column
+    for (let col = 0; col < DIMS; col++) {
+        // If there is a pawn in that column, in the right row...
+        if (position[row][col] === pawn) {
+            // Check that the squares behind it are empty.
+            if (
+                position[row + searchAdder][col] === '' &&
+                position[row + searchAdder2][col] === ''
+            ) {
+                candidateCols.push(col)
+            }
+        }
+    }
+    return candidateCols.map(col => boardCoord2uci({ row: row - 1, col }))
 }
