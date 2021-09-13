@@ -196,6 +196,7 @@ const ChessListingGrid = ({
                 &gt;
             </button>
             <button onClick={() => handleClick(moves.length)}>&gt;|</button>
+            <br />
             <a href={`${setupUrl}?fen=${encodeURIComponent(fen)}`}>
                 <button>Setup</button>
             </a>
