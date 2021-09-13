@@ -30,19 +30,52 @@ body {
     height: 22px;
     width: 22px; */
     /* this too */
+
     /* original values */
-    font-size: 34px;
+    /* font-size: 34px;
     line-height: 44px;
     height: 44px;
-    width: 44px;
+    width: 44px; */
+
+    /* font-size: 10px;
+    line-height: 12px;
+    height: 12px;
+    width: 12px; */
 }
 
-@media only screen and (max-width: 685px) {
+@media only screen and (max-width: 375px) {
+    .square {
+        font-size: 8px;
+        line-height: 10px;
+        height: 10px;
+        width: 10px;
+    }    
+}
+
+@media only screen and (min-width: 375px) {
+    .square {
+        font-size: 17px;
+        line-height: 20px;
+        height: 20px;
+        width: 20px;
+    }    
+}
+
+@media only screen and (min-width: 400px) {
     .square {
         font-size: 20px;
         line-height: 23px;
         height: 23px;
         width: 23px;
+    }    
+}
+
+@media only screen and (min-width: 565px) {
+    .square {
+        font-size: 34px;
+        line-height: 44px;
+        height: 44px;
+        width: 44px;    
     }    
 }
 
