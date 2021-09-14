@@ -205,9 +205,11 @@ export const getEnPassantCandidates = (position, turn) => {
                 position[row + searchAdder][col] === '' &&
                 position[row + searchAdder2][col] === ''
             ) {
-                candidateCols.push(col)
+                candidateCols.push(
+                    boardCoord2uci({ row: row + searchAdder, col })
+                )
             }
         }
     }
-    return candidateCols.map(col => boardCoord2uci({ row: row - 1, col }))
+    return candidateCols
 }
