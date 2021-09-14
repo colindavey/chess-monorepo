@@ -195,7 +195,7 @@ export const getEnPassantCandidates = (position, turn) => {
     const pawn = turn === 'W' ? 'P' : 'p'
     const searchAdder = turn === 'W' ? -1 : 1
     const searchAdder2 = 2 * searchAdder
-    const candidateCols = []
+    const candidateCols = ['-']
     // Check each column
     for (let col = 0; col < DIMS; col++) {
         // If there is a pawn in that column, in the right row...
