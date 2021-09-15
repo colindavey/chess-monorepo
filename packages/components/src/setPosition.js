@@ -12,6 +12,7 @@ const SetupPanel = ({
     fen,
     illegal,
     analysis,
+    enPassantCandidates,
     changePiece,
     changePosition,
     changeTurn,
@@ -164,8 +165,22 @@ const SetupPanel = ({
                 O-O-O
                 <br />
                 En passant square:&nbsp;&nbsp;
-                {enPassantSquare}
-                <br />
+                <div onChange={onChangeEnPassantSquare}>
+                    {enPassantCandidates.map(square => {
+                        console.log('ep sq', square)
+                        return (
+                            <span key={square}>
+                                <input
+                                    type='radio'
+                                    value={square}
+                                    name='enPassant'
+                                    defaultChecked={square === enPassantSquare}
+                                />{' '}
+                                {square}
+                            </span>
+                        )
+                    })}
+                </div>
                 Halfmove clock:&nbsp;&nbsp;
                 <input
                     type='number'
@@ -320,10 +335,8 @@ const PositionSetup = ({ gameUrl }) => {
         )
     )
     const [analysis, setAnalysis] = useState(makeAnalysis(illegalCheck, fen))
-
-    const enPassantCandidates = chessUtils.getEnPassantCandidates(
-        position,
-        turn
+    const [enPassantCandidates, setEnPassantCandidates] = useState(
+        chessUtils.getEnPassantCandidates(position, turn)
     )
     console.log('enPassantCandidates', enPassantCandidates)
 
@@ -356,6 +369,15 @@ const PositionSetup = ({ gameUrl }) => {
         )
         setIllegalCheck(illegalCheck)
         setAnalysis(makeAnalysis(illegalCheck, fen))
+        const enPassantCandidates = chessUtils.getEnPassantCandidates(
+            position,
+            turn
+        )
+        if (!enPassantCandidates.includes(enPassantSquare)) {
+            console.log('changing enPassant')
+            setEnPassantSquare('-')
+        }
+        setEnPassantCandidates(enPassantCandidates)
     }
 
     const changePiece = piece => {
@@ -482,6 +504,7 @@ const PositionSetup = ({ gameUrl }) => {
                 fen={fen}
                 illegal={illegalCheck.length}
                 analysis={analysis}
+                enPassantCandidates={enPassantCandidates}
                 changePiece={changePiece}
                 changePosition={changePosition}
                 changeTurn={changeTurn}
