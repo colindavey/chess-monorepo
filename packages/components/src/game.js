@@ -264,6 +264,9 @@ const Game = ({ setupUrl }) => {
     const params = Object.fromEntries(urlSearchParams.entries())
     const initFen = params.fen
     const initGameState = chessApi.initGame(initFen)
+    const { fullMoveNumber: initFullMoveNumber, turn: initTurn } =
+        chessApi.fen2Setup(initFen)
+    console.log('test', initFullMoveNumber, initTurn)
 
     const [moves, setMoves] = useState([])
     const [currentMoveNum, setCurrentMoveNum] = useState(0)
