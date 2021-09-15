@@ -165,21 +165,19 @@ const SetupPanel = ({
                 O-O-O
                 <br />
                 En passant square:&nbsp;&nbsp;
-                <div onChange={onChangeEnPassantSquare}>
-                    {enPassantCandidates.map(square => {
-                        console.log('ep sq', square)
-                        return (
-                            <span key={square}>
-                                <input
-                                    type='radio'
-                                    value={square}
-                                    name='enPassant'
-                                    defaultChecked={square === enPassantSquare}
-                                />{' '}
-                                {square}
-                            </span>
-                        )
-                    })}
+                <div>
+                    {enPassantCandidates.map(square => (
+                        <span key={square}>
+                            <input
+                                onChange={onChangeEnPassantSquare}
+                                type='radio'
+                                value={square}
+                                name='enPassant'
+                                checked={square === enPassantSquare}
+                            />{' '}
+                            {square}
+                        </span>
+                    ))}
                 </div>
                 Halfmove clock:&nbsp;&nbsp;
                 <input
@@ -338,8 +336,6 @@ const PositionSetup = ({ gameUrl }) => {
     const [enPassantCandidates, setEnPassantCandidates] = useState(
         chessUtils.getEnPassantCandidates(position, turn)
     )
-    console.log('enPassantCandidates', enPassantCandidates)
-
     // const highlightList = []
 
     const calculateBits = (
@@ -350,6 +346,15 @@ const PositionSetup = ({ gameUrl }) => {
         halfMoveClock,
         fullMoveNumber
     ) => {
+        const enPassantCandidates = chessUtils.getEnPassantCandidates(
+            position,
+            turn
+        )
+        if (!enPassantCandidates.includes(enPassantSquare)) {
+            enPassantSquare = '-'
+            setEnPassantSquare(enPassantSquare)
+        }
+        setEnPassantCandidates(enPassantCandidates)
         const fen = makeFen(
             position,
             turn,
@@ -369,15 +374,6 @@ const PositionSetup = ({ gameUrl }) => {
         )
         setIllegalCheck(illegalCheck)
         setAnalysis(makeAnalysis(illegalCheck, fen))
-        const enPassantCandidates = chessUtils.getEnPassantCandidates(
-            position,
-            turn
-        )
-        if (!enPassantCandidates.includes(enPassantSquare)) {
-            console.log('changing enPassant')
-            setEnPassantSquare('-')
-        }
-        setEnPassantCandidates(enPassantCandidates)
     }
 
     const changePiece = piece => {
