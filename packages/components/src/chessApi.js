@@ -12,6 +12,7 @@ import * as chessUtils from './chessUtils.js'
 //     ['', '', '', '', '', '', '', '']
 // ]
 
+// Local functions
 const calcGame = (moves, fen) => {
     const game = fen ? new Chess(fen) : new Chess()
     moves.forEach(element => {
@@ -86,6 +87,7 @@ const emptyGame = () => {
 //     return chessApiState(game)
 // }
 
+// Public Functions used by setPosition.js
 export const analyzeFen = fen => {
     const game = new Chess(fen)
     return analyzeGame(game)
@@ -142,6 +144,8 @@ export const inCheck = fen => {
     return game.in_check()
 }
 
+// Public Functions used by game.js
+// All return chessApiState object
 export const initGame = (fen = null) => {
     const game = calcGame([], fen)
     return chessApiState(game)
@@ -158,8 +162,8 @@ export const moveAdd = (moves, newMove, fen) => {
     return chessApiState(game)
 }
 
+// Variables
 const initGameState = initGame()
 const emptyGameState = emptyGame()
-
 export const initPosition = initGameState.position
 export const emptyPosition = emptyGameState.position
