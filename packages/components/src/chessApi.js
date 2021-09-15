@@ -12,7 +12,7 @@ import * as chessUtils from './chessUtils.js'
 //     ['', '', '', '', '', '', '', '']
 // ]
 
-export const calcGame = (moves, fen) => {
+const calcGame = (moves, fen) => {
     const game = fen ? new Chess(fen) : new Chess()
     moves.forEach(element => {
         game.move(element)
@@ -20,7 +20,7 @@ export const calcGame = (moves, fen) => {
     return game
 }
 
-export const board2Position = board => {
+const board2Position = board => {
     /* eslint-disable */
     return board.map(
         row => row.map(
@@ -33,7 +33,7 @@ export const board2Position = board => {
     /* eslint-enable */
 }
 
-export const analyzeGame = game => {
+const analyzeGame = game => {
     const msg = []
     const turn = game.turn() === 'w' ? 'White' : 'Black'
     if (game.game_over()) {
@@ -74,26 +74,17 @@ const chessApiState = game => {
     }
 }
 
-export const initGame = (fen = null) => {
-    const game = calcGame([], fen)
-    return chessApiState(game)
-}
-
-export const emptyGame = () => {
+const emptyGame = () => {
     const game = new Chess()
     game.clear()
     return chessApiState(game)
 }
 
-export const fen2Game = fen => {
-    const game = new Chess(fen)
-    return chessApiState(game)
-}
-
-export const initGameState = initGame()
-export const initPosition = initGameState.position
-const emptyGameState = emptyGame()
-export const emptyPosition = emptyGameState.position
+// Not called by anything
+// const fen2Game = fen => {
+//     const game = new Chess(fen)
+//     return chessApiState(game)
+// }
 
 export const analyzeFen = fen => {
     const game = new Chess(fen)
@@ -151,6 +142,11 @@ export const inCheck = fen => {
     return game.in_check()
 }
 
+export const initGame = (fen = null) => {
+    const game = calcGame([], fen)
+    return chessApiState(game)
+}
+
 export const moveTo = (moves, fen) => {
     const game = calcGame(moves, fen)
     return chessApiState(game)
@@ -161,3 +157,9 @@ export const moveAdd = (moves, newMove, fen) => {
     game.move(newMove, { sloppy: true })
     return chessApiState(game)
 }
+
+const initGameState = initGame()
+const emptyGameState = emptyGame()
+
+export const initPosition = initGameState.position
+export const emptyPosition = emptyGameState.position

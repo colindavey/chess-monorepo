@@ -287,9 +287,7 @@ const PositionSetup = ({ gameUrl }) => {
     const urlSearchParams = new URLSearchParams(window.location.search)
     const params = Object.fromEntries(urlSearchParams.entries())
     const fenIn = params.fen
-    if (fenIn) {
-        chessApi.fen2Setup(fenIn)
-    }
+
     const setup = fenIn
         ? chessApi.fen2Setup(fenIn)
         : {
