@@ -191,9 +191,9 @@ export function checkLegalPos(position, castle) {
 }
 
 export const getEnPassantCandidates = (position, turn) => {
-    const row = turn === 'W' ? 3 : 4
-    const pawn = turn === 'W' ? 'P' : 'p'
-    const searchAdder = turn === 'W' ? -1 : 1
+    const row = turn === 'B' ? 3 : 4
+    const pawn = turn === 'B' ? 'P' : 'p'
+    const searchAdder = turn === 'B' ? -1 : 1
     const searchAdder2 = 2 * searchAdder
     const candidateCols = ['-']
     // Check each column
