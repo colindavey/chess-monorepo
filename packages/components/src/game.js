@@ -265,14 +265,16 @@ const Game = ({ setupUrl }) => {
     const initFen = params.fen
     console.log('init', initFen)
     const initGameState = chessApi.initGame(initFen)
-    let initFullMoveNumber = 1
-    let initTurn = 'W'
+    let tmpFullMoveNumber = 1
+    let tmpTurn = 'W'
     if (initFen) {
-        const { fullMoveNumber: tmpFullMoveNumber, turn: tmpTurn } =
+        const { fullMoveNumber: fenFullMoveNumber, turn: fenTurn } =
             chessApi.fen2Setup(initFen)
-        initFullMoveNumber = tmpFullMoveNumber
-        initTurn = tmpTurn
+        tmpFullMoveNumber = fenFullMoveNumber
+        tmpTurn = fenTurn
     }
+    const initFullMoveNumber = tmpFullMoveNumber
+    const initTurn = tmpTurn
     console.log('test', initFullMoveNumber, initTurn)
 
     const [moves, setMoves] = useState([])
