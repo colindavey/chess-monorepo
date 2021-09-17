@@ -1,9 +1,13 @@
 import React from 'react'
 /**
- * Shows the move history, with current move highlighted.
- * Allows client to move to clicked move with the handleClick
- * callback.
+ * Shows the move history (array of moves), with current move highlighted.
+ * Allows navigation among the moves by clicking in history, and
+ * with "video buttons", using handleClick callback, which takes
+ * an index into the moves array.
  * Provides button to go to setup with the current position.
+ * Adjusts display as appropriate depending on who has first move --
+ * necessary to cover coming in with FEN where black has first move.
+ * Client can be unaware of those machinations.
  */
 const ChessListingGrid = ({
     moves,
