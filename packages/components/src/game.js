@@ -148,16 +148,17 @@ const ChessListingGrid = ({
     if (initTurn === 'B') {
         moves = ['', ...moves]
     }
-    // Create an array of rows, where each row has a white move and a black move,
-    // where the first move is empty if init turn is black. Last row can be empty
-    // if last move made was white's.
+    // Create an array of rows, where each row has a white move and a black move.
+    // The first move is empty if init turn is black. Last col of last row can be 
+    // empty if last move made was white's.
     const tableMoves = []
     for (let i = 0; i < moves.length; i += 2) {
         // if initial move was black's, then adjust
         const leftMoveNum = initTurn === 'W' ? i : i - 1
+        const rightMoveNum = leftMoveNum + 1
         tableMoves.push([
             moves[i] ? { move: moves[i], moveNum: leftMoveNum } : '',
-            moves[i + 1] ? { move: moves[i + 1], moveNum: leftMoveNum + 1 } : ''
+            moves[i + 1] ? { move: moves[i + 1], moveNum: rightMoveNum } : ''
         ])
     }
 
@@ -289,7 +290,6 @@ const Game = ({ setupUrl }) => {
     const urlSearchParams = new URLSearchParams(window.location.search)
     const params = Object.fromEntries(urlSearchParams.entries())
     const initFen = params.fen
-    console.log('init', initFen)
     const initGameState = chessApi.initGame(initFen)
     let tmpFullMoveNumber = 1
     let tmpTurn = 'W'
