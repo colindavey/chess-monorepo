@@ -14,7 +14,7 @@ const Square = ({ onClick, piece, highlighted, colorClass }) => {
     )
 }
 
-const DumbBoard = ({ position, highlightList, handleClick }) => {
+const DumbBoard = ({ position, highlightList, handleClick, message }) => {
     const [reverse, setReverse] = useState(false)
 
     const renderSquare = (piece, boardCoord) => {
@@ -81,6 +81,7 @@ const DumbBoard = ({ position, highlightList, handleClick }) => {
             <button onClick={() => handleReverseClick(!reverse)}>
                 {reverse ? '^' : 'v'}
             </button>
+            &nbsp; <b>{message}</b>
             <div className='game-board'>{renderBoard()}</div>
         </div>
     )

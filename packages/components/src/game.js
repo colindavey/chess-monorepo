@@ -45,7 +45,7 @@ const ModalPromotion = ({ turn, promoteCallback, clientX, clientY }) => {
     )
 }
 
-const SmartBoard = ({ position, turn, onMove, legalMoves, over }) => {
+const SmartBoard = ({ position, turn, onMove, legalMoves, over, status }) => {
     const [click1, setClick1] = useState(null)
     const [click2, setClick2] = useState(null)
     const [legalDests, setLegalDests] = useState([])
@@ -121,6 +121,7 @@ const SmartBoard = ({ position, turn, onMove, legalMoves, over }) => {
                 position={position}
                 highlightList={highlightList}
                 handleClick={handleClick}
+                message={status}
             />
             {showPromotion && (
                 <ModalPromotion
@@ -199,7 +200,7 @@ const ChessListingGrid = ({
         )
     })
     return (
-        <div>
+        <div className='game-info'>
             <div className='scroll'>{listing}</div>
             <button onClick={() => handleClick(0)}>|&lt;</button>
             <button
@@ -219,32 +220,6 @@ const ChessListingGrid = ({
             <a href={`${setupUrl}?fen=${encodeURIComponent(fen)}`}>
                 <button>Setup</button>
             </a>
-        </div>
-    )
-}
-
-const GameInfo = ({
-    moves,
-    status,
-    currentMoveNum,
-    handleListingClick,
-    setupUrl,
-    fen,
-    initTurn,
-    initFullMoveNumber
-}) => {
-    return (
-        <div className='game-info'>
-            {status}
-            <ChessListingGrid
-                moves={moves}
-                currentMoveNum={currentMoveNum}
-                handleClick={handleListingClick}
-                setupUrl={setupUrl}
-                fen={fen}
-                initTurn={initTurn}
-                initFullMoveNumber={initFullMoveNumber}
-            />
         </div>
     )
 }
@@ -271,12 +246,12 @@ const GameView = ({
                 onMove={handleMove}
                 legalMoves={legalMoves}
                 over={over}
-            />
-            <GameInfo
-                moves={moves}
                 status={status}
+            />
+            <ChessListingGrid
+                moves={moves}
                 currentMoveNum={currentMoveNum}
-                handleListingClick={handleListingClick}
+                handleClick={handleListingClick}
                 setupUrl={setupUrl}
                 fen={fen}
                 initTurn={initTurn}
