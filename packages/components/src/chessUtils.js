@@ -40,7 +40,8 @@ export function piece2Color(piece) {
     return piece.toUpperCase() === piece ? 'W' : 'B'
 }
 
-export function moveNum2Color(moveNum) {
+export function moveNum2Color(moveNum, initTurn) {
+    if (initTurn === 'B') moveNum++
     // eslint-disable-next-line prettier/prettier
     return ((moveNum % 2) === 0) ? 'W' : 'B'
 }

@@ -139,33 +139,51 @@ const ChessListingGrid = ({
     currentMoveNum,
     handleClick,
     setupUrl,
-    fen
+    fen,
+    initTurn,
+    initFullMoveNumber
 }) => {
+    const numMoves = moves.length
+    // allow the top left cell to be empty if Black has first move
+    if (initTurn === 'B') {
+        moves = ['', ...moves]
+    }
+    // Create an array of rows, where each row has a white move and a black move,
+    // where the first move is empty if init turn is black. Last row can be empty
+    // if last move made was white's.
     const tableMoves = []
     for (let i = 0; i < moves.length; i += 2) {
+        // if initial move was black's, then adjust
+        const leftMoveNum = initTurn === 'W' ? i : i - 1
         tableMoves.push([
-            { move: moves[i], index: i },
-            moves[i + 1] ? { move: moves[i + 1], index: i + 1 } : ''
+            moves[i] ? { move: moves[i], moveNum: leftMoveNum } : '',
+            moves[i + 1] ? { move: moves[i + 1], moveNum: leftMoveNum + 1 } : ''
         ])
     }
 
     const renderCol = (row, rowIndex) => {
         return row.map((col, colIndex) => {
-            const index = `${rowIndex},${colIndex}`
+            const key = `${rowIndex},${colIndex}`
+            /* eslint-disable */
             const move =
-                col.index + 1 === currentMoveNum ? <b>{col.move}</b> : col.move
+                col.moveNum + 1 === currentMoveNum
+                    ?
+                        <b>{col.move}</b> 
+                    :
+                        col.move
+            /* eslint-enable */
             /* eslint-disable */
             return col
                 ?
                     <div
-                        key={index}
+                        key={key}
                         className='grid-cell grid-cell-button'
-                        onClick={() => handleClick(col.index+1)}
+                        onClick={() => handleClick(col.moveNum+1)}
                     >
                         {move}
                     </div>
                 :
-                    <div key={index} className='grid-cell'/>
+                    <div key={key} className='grid-cell'/>
             /* eslint-enable */
         })
     }
@@ -174,7 +192,7 @@ const ChessListingGrid = ({
         const newCol = renderCol(row, index)
         return (
             <div key={index} className='grid-wrapper'>
-                <div className='grid-cell'>{index + 1}.</div>
+                <div className='grid-cell'>{index + initFullMoveNumber}.</div>
                 {newCol}
             </div>
         )
@@ -190,12 +208,12 @@ const ChessListingGrid = ({
             </button>
             <button
                 onClick={() =>
-                    handleClick(Math.min(currentMoveNum + 1, moves.length))
+                    handleClick(Math.min(currentMoveNum + 1, numMoves))
                 }
             >
                 &gt;
             </button>
-            <button onClick={() => handleClick(moves.length)}>&gt;|</button>
+            <button onClick={() => handleClick(numMoves)}>&gt;|</button>
             <br />
             <a href={`${setupUrl}?fen=${encodeURIComponent(fen)}`}>
                 <button>Setup</button>
@@ -210,7 +228,9 @@ const GameInfo = ({
     currentMoveNum,
     handleListingClick,
     setupUrl,
-    fen
+    fen,
+    initTurn,
+    initFullMoveNumber
 }) => {
     return (
         <div className='game-info'>
@@ -221,6 +241,8 @@ const GameInfo = ({
                 handleClick={handleListingClick}
                 setupUrl={setupUrl}
                 fen={fen}
+                initTurn={initTurn}
+                initFullMoveNumber={initFullMoveNumber}
             />
         </div>
     )
@@ -236,13 +258,15 @@ const GameView = ({
     handleListingClick,
     setupUrl,
     fen,
-    over
+    over,
+    initTurn,
+    initFullMoveNumber
 }) => {
     return (
         <div className='game'>
             <SmartBoard
                 position={position}
-                turn={chessUtils.moveNum2Color(currentMoveNum)}
+                turn={chessUtils.moveNum2Color(currentMoveNum, initTurn)}
                 onMove={handleMove}
                 legalMoves={legalMoves}
                 over={over}
@@ -254,6 +278,8 @@ const GameView = ({
                 handleListingClick={handleListingClick}
                 setupUrl={setupUrl}
                 fen={fen}
+                initTurn={initTurn}
+                initFullMoveNumber={initFullMoveNumber}
             />
         </div>
     )
@@ -270,12 +296,11 @@ const Game = ({ setupUrl }) => {
     if (initFen) {
         const { fullMoveNumber: fenFullMoveNumber, turn: fenTurn } =
             chessApi.fen2Setup(initFen)
-        tmpFullMoveNumber = fenFullMoveNumber
+        tmpFullMoveNumber = parseInt(fenFullMoveNumber)
         tmpTurn = fenTurn
     }
     const initFullMoveNumber = tmpFullMoveNumber
     const initTurn = tmpTurn
-    console.log('test', initFullMoveNumber, initTurn)
 
     const [moves, setMoves] = useState([])
     const [currentMoveNum, setCurrentMoveNum] = useState(0)
@@ -321,7 +346,7 @@ const Game = ({ setupUrl }) => {
     return (
         <GameView
             position={position}
-            turn={chessUtils.moveNum2Color(currentMoveNum)}
+            // turn={chessUtils.moveNum2Color(currentMoveNum)}
             legalMoves={legalMoves}
             moves={moves}
             status={status}
@@ -331,6 +356,8 @@ const Game = ({ setupUrl }) => {
             setupUrl={setupUrl}
             fen={fen}
             over={over}
+            initTurn={initTurn}
+            initFullMoveNumber={initFullMoveNumber}
         />
     )
 }
