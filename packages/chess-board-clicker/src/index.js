@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import 'chess-monorepo-components/src/styles.css';
 import { DumbBoard } from 'chess-monorepo-components'
 import * as chessApi from 'chess-monorepo-components' 
+import * as chessUtils from 'chess-monorepo-components' 
 
 const BoardClicker = () => {
-    const handleClick = (_e, boardCoord) => console.log('click', boardCoord)
+    const [message, setMessage] = useState('')
+    const handleClick = (_e, boardCoord) => setMessage(`row ${boardCoord.row}, col ${boardCoord.col}: ${chessUtils.boardCoord2uci(boardCoord)}`)
     const highlightList = []
     const position = chessApi.emptyPosition
     return (
@@ -13,6 +15,7 @@ const BoardClicker = () => {
         position={position}
         highlightList={highlightList}
         handleClick={handleClick}
+        message={message}
         />
     )
 }
