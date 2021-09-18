@@ -334,8 +334,6 @@ const PositionSetup = ({ gameUrl }) => {
     const [enPassantCandidates, setEnPassantCandidates] = useState(
         chessUtils.getEnPassantCandidates(position, turn)
     )
-    // const highlightList = []
-
     const calculateBits = (
         position,
         turn,
@@ -484,11 +482,7 @@ const PositionSetup = ({ gameUrl }) => {
 
     return (
         <div className='game'>
-            <DumbBoard
-                position={position}
-                highlightList={[]}
-                handleClick={handleClick}
-            />
+            <DumbBoard position={position} handleClick={handleClick} />
             <SetupPanel
                 turn={turn}
                 castle={castle}

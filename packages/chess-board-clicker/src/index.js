@@ -8,14 +8,12 @@ import * as chessUtils from 'chess-monorepo-components'
 const BoardClicker = () => {
     const [message, setMessage] = useState('')
     const handleClick = (_e, boardCoord) => setMessage(`row ${boardCoord.row}, col ${boardCoord.col}: ${chessUtils.boardCoord2uci(boardCoord)}`)
-    const highlightList = []
     const position = chessApi.emptyPosition
     return (
         <DumbBoard
-        position={position}
-        highlightList={highlightList}
-        handleClick={handleClick}
-        message={message}
+            position={position}
+            handleClick={handleClick}
+            message={message}
         />
     )
 }

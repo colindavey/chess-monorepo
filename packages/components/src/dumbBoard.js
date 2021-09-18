@@ -14,7 +14,12 @@ const Square = ({ onClick, piece, highlighted, colorClass }) => {
     )
 }
 
-const DumbBoard = ({ position, highlightList, handleClick, message = '' }) => {
+const DumbBoard = ({
+    position,
+    highlightList = [],
+    handleClick,
+    message = ''
+}) => {
     const [reverse, setReverse] = useState(false)
 
     const renderSquare = (piece, boardCoord) => {
