@@ -150,7 +150,7 @@ div:hover > #hov {
     }    
 }
 
-@media (pointer: coarse) {
+@media (pointer: coarse), (hover: none) {
     div:hover > #hov {
         display: none;
     }
