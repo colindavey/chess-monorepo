@@ -113,6 +113,43 @@ body {
     display: table;
 }
 
+div:hover > #hov {
+    display: block;
+    /* cursor: none; */
+}
+
+#hov{
+    display: none;
+    position: absolute;
+    /* cursor: none; */
+    font-size: 34px;
+    pointer-events: none;
+}
+
+@media only screen and (max-width: 375px) {
+    #hov {
+        font-size: 8px;
+    }    
+}
+
+@media only screen and (min-width: 375px) {
+    #hov {
+        font-size: 17px;
+    }    
+}
+
+@media only screen and (min-width: 400px) {
+    #hov {
+        font-size: 20px;
+    }    
+}
+
+@media only screen and (min-width: 565px) {
+    #hov {
+        font-size: 34px;
+    }    
+}
+
 /* For moves listing */
 .grid-cell {
     border-spacing: 0px;

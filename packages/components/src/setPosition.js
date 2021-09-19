@@ -480,9 +480,21 @@ const PositionSetup = ({ gameUrl }) => {
         )
     }
 
+    // Moves the cursor element, which is either a piece, or 'X'
+    const handleMouseMove = ev => {
+        const el = document.getElementById('hov')
+        el.style.top = ev.clientY + 'px'
+        el.style.left = ev.clientX + 'px'
+        // el.style.top = ev.pageY + 'px'
+        // el.style.left = ev.pageX + 'px'
+    }
+
     return (
         <div className='game'>
-            <DumbBoard position={position} handleClick={handleClick} />
+            <div onMouseMove={ev => handleMouseMove(ev)}>
+                <DumbBoard position={position} handleClick={handleClick} />
+                <div id='hov'>{chessUtils.pieceLookup[piece] || 'X'}</div>
+            </div>
             <SetupPanel
                 turn={turn}
                 castle={castle}
