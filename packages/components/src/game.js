@@ -49,8 +49,7 @@ const Game = ({ setupUrl }) => {
     let tmpFullMoveNumber = 1
     let tmpTurn = 'W'
     if (initFen) {
-        const { fullMoveNumber: fenFullMoveNumber, turn: fenTurn } =
-            chessApi.fen2Setup(initFen)
+        const { fullMoveNumber: fenFullMoveNumber, turn: fenTurn } = chessApi.fen2Setup(initFen)
         tmpFullMoveNumber = parseInt(fenFullMoveNumber)
         tmpTurn = fenTurn
     }
@@ -70,9 +69,7 @@ const Game = ({ setupUrl }) => {
         const localMoves = moves.slice(0, currentMoveNum)
         const chessApiState = chessApi.moveAdd(
             localMoves,
-            `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(
-                click2
-            )}${promotion}`,
+            `${chessUtils.boardCoord2uci(click1)}${chessUtils.boardCoord2uci(click2)}${promotion}`,
             initFen
         )
         setMoves(chessApiState.moves)
@@ -85,10 +82,7 @@ const Game = ({ setupUrl }) => {
         updateState(chessApiState, moveNum)
     }
 
-    const updateState = (
-        { position, legalMoves, status, fen, over },
-        moveNum
-    ) => {
+    const updateState = ({ position, legalMoves, status, fen, over }, moveNum) => {
         setPosition(position)
         setLegalMoves(legalMoves)
         setCurrentMoveNum(moveNum)

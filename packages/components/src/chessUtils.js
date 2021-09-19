@@ -59,9 +59,7 @@ export function boardCoord2uci({ row, col }) {
 export function getLegalDestsFrom(boardCoord, legalMoves) {
     const startCoord = boardCoord2uci(boardCoord)
     // filter the legal moves down to those starting from the boardCoord
-    const legalMovesFiltered = legalMoves.filter(
-        m => m.slice(0, 2) === startCoord
-    )
+    const legalMovesFiltered = legalMoves.filter(m => m.slice(0, 2) === startCoord)
     // e.g. maps ["e2e3", "e2e4"] to ["e3", "e4"]
     const legalDests = legalMovesFiltered.map(m => m.slice(2))
     return legalDests
@@ -140,52 +138,36 @@ export function checkLegalPos(position, castle) {
     const wKingOnOrig = position[0][4] === 'K'
     if (castle.includes('K')) {
         if (!wKingOnOrig) {
-            msg.push(
-                'O-O available for White, but King not on original square.'
-            )
+            msg.push('O-O available for White, but King not on original square.')
         }
         if (position[0][7] !== 'R') {
-            msg.push(
-                "O-O available for White, but King's Rook not on original square."
-            )
+            msg.push("O-O available for White, but King's Rook not on original square.")
         }
     }
     if (castle.includes('Q')) {
         if (!wKingOnOrig) {
-            msg.push(
-                'O-O-O available for White, but King not on original square.'
-            )
+            msg.push('O-O-O available for White, but King not on original square.')
         }
         if (position[0][0] !== 'R') {
-            msg.push(
-                "O-O-O available for White, but Queen's Rook not on original square."
-            )
+            msg.push("O-O-O available for White, but Queen's Rook not on original square.")
         }
     }
     // Check Black castling
     const bKingOnOrig = position[7][4] === 'k'
     if (castle.includes('k')) {
         if (!bKingOnOrig) {
-            msg.push(
-                'O-O available for Black, but King not on original square.'
-            )
+            msg.push('O-O available for Black, but King not on original square.')
         }
         if (position[7][7] !== 'r') {
-            msg.push(
-                "O-O available for Black, but King's Rook not on original square."
-            )
+            msg.push("O-O available for Black, but King's Rook not on original square.")
         }
     }
     if (castle.includes('q')) {
         if (!bKingOnOrig) {
-            msg.push(
-                'O-O-O available for Black, but King not on original square.'
-            )
+            msg.push('O-O-O available for Black, but King not on original square.')
         }
         if (position[7][0] !== 'r') {
-            msg.push(
-                "O-O-O available for Black, but Queen's Rook not on original square."
-            )
+            msg.push("O-O-O available for Black, but Queen's Rook not on original square.")
         }
     }
     return msg
@@ -206,9 +188,7 @@ export const getEnPassantCandidates = (position, turn) => {
                 position[row + searchAdder][col] === '' &&
                 position[row + searchAdder2][col] === ''
             ) {
-                candidateCols.push(
-                    boardCoord2uci({ row: row + searchAdder, col })
-                )
+                candidateCols.push(boardCoord2uci({ row: row + searchAdder, col }))
             }
         }
     }

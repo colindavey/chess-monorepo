@@ -217,14 +217,7 @@ const SetupPanel = ({
 // <div>
 // {encodeURIComponent(fen)}
 
-const makeFen = (
-    position,
-    turn,
-    castle,
-    enPassantSquare,
-    halfMoveClock,
-    fullMoveNumber
-) => {
+const makeFen = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber) => {
     return chessApi.setup2Fen({
         position: position,
         turn: turn,
@@ -235,14 +228,7 @@ const makeFen = (
     })
 }
 
-const checkLegalPos = (
-    position,
-    turn,
-    castle,
-    enPassantSquare,
-    halfMoveClock,
-    fullMoveNumber
-) => {
+const checkLegalPos = (position, turn, castle, enPassantSquare, halfMoveClock, fullMoveNumber) => {
     const illegalCheck = chessUtils.checkLegalPos(position, castle)
     // Tests that require chessAPI
     const tmpFen = makeFen(

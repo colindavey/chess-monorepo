@@ -23,14 +23,10 @@ const ModalPromotion = ({ turn, promoteCallback, clientX, clientY }) => {
     const promotionStyleTmp = JSON.parse(JSON.stringify(promotionStyle))
     promotionStyleTmp.left = clientX
     promotionStyleTmp.top = clientY
-    const qSym =
-        turn === 'B' ? chessUtils.pieceLookup.q : chessUtils.pieceLookup.Q
-    const rSym =
-        turn === 'B' ? chessUtils.pieceLookup.r : chessUtils.pieceLookup.R
-    const bSym =
-        turn === 'B' ? chessUtils.pieceLookup.b : chessUtils.pieceLookup.B
-    const nSym =
-        turn === 'B' ? chessUtils.pieceLookup.n : chessUtils.pieceLookup.N
+    const qSym = turn === 'B' ? chessUtils.pieceLookup.q : chessUtils.pieceLookup.Q
+    const rSym = turn === 'B' ? chessUtils.pieceLookup.r : chessUtils.pieceLookup.R
+    const bSym = turn === 'B' ? chessUtils.pieceLookup.b : chessUtils.pieceLookup.B
+    const nSym = turn === 'B' ? chessUtils.pieceLookup.n : chessUtils.pieceLookup.N
     return (
         <div style={modalContainerStyle}>
             <div style={promotionStyleTmp}>
@@ -58,34 +54,20 @@ const GameBoard = ({ position, turn, onMove, legalMoves, over, status }) => {
 
     const handleClick = ({ clientX, clientY }, boardCoord) => {
         if (!over) {
-            if (
-                chessUtils.piece2Color(
-                    position[boardCoord.row][boardCoord.col]
-                ) === turn
-            ) {
+            if (chessUtils.piece2Color(position[boardCoord.row][boardCoord.col]) === turn) {
                 setClick1(boardCoord)
-                const legalDests = chessUtils.getLegalDestsFrom(
-                    boardCoord,
-                    legalMoves
-                )
+                const legalDests = chessUtils.getLegalDestsFrom(boardCoord, legalMoves)
                 setLegalDests(legalDests)
-                setHighlightList([
-                    ...legalDests,
-                    chessUtils.boardCoord2uci(boardCoord)
-                ])
+                setHighlightList([...legalDests, chessUtils.boardCoord2uci(boardCoord)])
             } else {
                 if (!click1) {
                     return
                 }
-                if (
-                    legalDests.includes(chessUtils.boardCoord2uci(boardCoord))
-                ) {
+                if (legalDests.includes(chessUtils.boardCoord2uci(boardCoord))) {
                     // Deal with promotion
                     if (
-                        (position[click1.row][click1.col] === 'P' &&
-                            boardCoord.row === 7) ||
-                        (position[click1.row][click1.col] === 'p' &&
-                            boardCoord.row === 0)
+                        (position[click1.row][click1.col] === 'P' && boardCoord.row === 7) ||
+                        (position[click1.row][click1.col] === 'p' && boardCoord.row === 0)
                     ) {
                         setShowPromotion(true)
                         setClick2(boardCoord)
