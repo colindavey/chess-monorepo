@@ -150,6 +150,12 @@ div:hover > #hov {
     }    
 }
 
+@media (pointer: coarse) {
+    div:hover > #hov {
+        display: none;
+    }
+}
+
 /* For moves listing */
 .grid-cell {
     border-spacing: 0px;
