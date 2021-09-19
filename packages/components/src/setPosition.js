@@ -67,37 +67,38 @@ const SetupPanel = ({
                 <button onClick={() => changePosition('init')}>Init</button>
                 <button onClick={() => changePosition('empty')}>Empty</button>
             </div>
-            <div>
+            <div className='pieceSelector'>
                 <div onChange={onChangePiece}>
-                    <input type='radio' value='K' name='piece' defaultChecked />{' '}
-                    {chessUtils.pieceLookup.K}
-                    <input type='radio' value='Q' name='piece' />{' '}
-                    {chessUtils.pieceLookup.Q}
-                    <input type='radio' value='R' name='piece' />{' '}
-                    {chessUtils.pieceLookup.R}
-                    <input type='radio' value='B' name='piece' />{' '}
-                    {chessUtils.pieceLookup.B}
-                    <input type='radio' value='N' name='piece' />{' '}
-                    {chessUtils.pieceLookup.N}
-                    <input type='radio' value='P' name='piece' />{' '}
-                    {chessUtils.pieceLookup.P}
+                    <input type='radio' id='radioKW' value='K' name='piece' defaultChecked />{' '}
+                    <label htmlFor='radioKW'>{chessUtils.pieceLookup.K}</label>
+                    <input type='radio' id='radioQW' value='Q' name='piece' />{' '}
+                    <label htmlFor='radioQW'>{chessUtils.pieceLookup.Q}</label>
+                    <input type='radio' id='radioRW' value='R' name='piece' />{' '}
+                    <label htmlFor='radioRW'>{chessUtils.pieceLookup.R}</label>
+                    <input type='radio' id='radioBW' value='B' name='piece' />{' '}
+                    <label htmlFor='radioBW'>{chessUtils.pieceLookup.B}</label>
+                    <input type='radio' id='radioNW' value='N' name='piece' />{' '}
+                    <label htmlFor='radioNW'>{chessUtils.pieceLookup.N}</label>
+                    <input type='radio' id='radioPW' value='P' name='piece' />{' '}
+                    <label htmlFor='radioPW'>{chessUtils.pieceLookup.P}</label>
                 </div>
                 <div onChange={onChangePiece}>
-                    <input type='radio' value='k' name='piece' />{' '}
-                    {chessUtils.pieceLookup.k}
-                    <input type='radio' value='q' name='piece' />{' '}
-                    {chessUtils.pieceLookup.q}
-                    <input type='radio' value='r' name='piece' />{' '}
-                    {chessUtils.pieceLookup.r}
-                    <input type='radio' value='b' name='piece' />{' '}
-                    {chessUtils.pieceLookup.b}
-                    <input type='radio' value='n' name='piece' />{' '}
-                    {chessUtils.pieceLookup.n}
-                    <input type='radio' value='p' name='piece' />{' '}
-                    {chessUtils.pieceLookup.p}
+                    <input type='radio' id='radioKB' value='k' name='piece' />{' '}
+                    <label htmlFor='radioKB'>{chessUtils.pieceLookup.k}</label>
+                    <input type='radio' id='radioQB' value='q' name='piece' />{' '}
+                    <label htmlFor='radioQB'>{chessUtils.pieceLookup.q}</label>
+                    <input type='radio' id='radioRB' value='r' name='piece' />{' '}
+                    <label htmlFor='radioRB'>{chessUtils.pieceLookup.r}</label>
+                    <input type='radio' id='radioBB' value='b' name='piece' />{' '}
+                    <label htmlFor='radioBB'>{chessUtils.pieceLookup.b}</label>
+                    <input type='radio' id='radioNB' value='n' name='piece' />{' '}
+                    <label htmlFor='radioNB'>{chessUtils.pieceLookup.n}</label>
+                    <input type='radio' id='radioPB' value='p' name='piece' />{' '}
+                    <label htmlFor='radioPB'>{chessUtils.pieceLookup.p}</label>
                 </div>
                 <div onChange={onChangePiece}>
-                    <input type='radio' value='X' name='piece' /> X
+                    <input type='radio' id='radioX' value='X' name='piece' />
+                    <label htmlFor='radioX'>X</label>
                 </div>
             </div>
             <hr />

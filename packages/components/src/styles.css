@@ -113,6 +113,11 @@ body {
     display: table;
 }
 
+.status {
+    margin-bottom: 10px;
+}
+
+/* For setup */
 div:hover > #hov {
     display: block;
     /* cursor: none; */
@@ -154,6 +159,51 @@ div:hover > #hov {
     div:hover > #hov {
         display: none;
     }
+}
+
+/* Radio buttons see
+https://markheath.net/post/customize-radio-button-css */
+.pieceSelector {
+  margin-top: 7px;
+}
+
+.pieceSelector input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.pieceSelector label {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    text-align: center;
+    /* padding: 2px 4px; */
+    background-color: #888;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    border-style: inset;
+}
+
+.pieceSelector label:hover {
+  background-color: white;
+}
+
+.pieceSelector input[type="radio"]:focus + label {
+    /* border: 4px solid #444; */
+    /* border: 2px solid #aaa; */
+    border-style: outset;
+}
+
+.pieceSelector input[type="radio"]:checked + label {
+    /* background-color: #bfb;
+    border-color: #4c4; */
+    background-color: white;
+    border-style: outset;
+    /* border: 4px solid #444; */
+    /* border-color: #4c4; */
 }
 
 /* For moves listing */
@@ -214,10 +264,6 @@ div.scroll {
     overflow-y: auto; 
     /* text-align:justify;  */
 } 
-
-.status {
-    margin-bottom: 10px;
-}
 
 /* Containers for Apps */
 .game {
